@@ -260,7 +260,7 @@ export class AuthController {
         success: true,
         message: 'Password reset instructions have been sent to your email',
         // In production, don't send the token in response - send it via email
-        data: { resetToken }
+        // data: { resetToken }
       };
 
       res.status(200).json(response);
@@ -312,7 +312,7 @@ export class AuthController {
         success: true,
         message: 'Verification email has been sent',
         // In production, don't send the token in response - send it via email
-        data: { verificationToken }
+        // data: { verificationToken }
       };
 
       res.status(200).json(response);

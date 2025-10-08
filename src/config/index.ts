@@ -62,8 +62,8 @@ const config: Config = {
   },
   
   mongodb: {
-    uri: process.env.MONGODB_URI || 'mongodb://localhost:27017/educational_management',
-    testUri: process.env.MONGODB_TEST_URI || 'mongodb://localhost:27017/educational_management_test',
+    uri: process.env.MONGODB_URI || '',
+    testUri: process.env.MONGODB_TEST_URI || '',
   },
   
   rateLimit: {
@@ -84,8 +84,8 @@ const config: Config = {
     host: process.env.EMAIL_HOST || 'smtp.gmail.com',
     port: parseInt(process.env.EMAIL_PORT || '465', 10),
     secure: process.env.EMAIL_SECURE === 'true',
-    user: process.env.EMAIL_USER || 'auscaydev@gmail.com',
-    password: process.env.EMAIL_PASSWORD || 'kjnn qqfc svjg wvow',
+    user: process.env.EMAIL_USER || '',
+    password: process.env.EMAIL_PASSWORD || '',
     from: process.env.EMAIL_FROM || 'Cloud Top G',
     fromName: process.env.EMAIL_FROM_NAME || 'Cloud Top G Management System',
     brevo: {
