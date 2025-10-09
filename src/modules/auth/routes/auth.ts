@@ -13,6 +13,7 @@ import {
   resetPasswordSchema,
   resendVerificationSchema
 } from '../validators/authValidators';
+import { updateUserDetailsSchema } from '../validators/userUpdateValidators';
 
 const router = Router();
 const authController = new AuthController();
@@ -84,6 +85,13 @@ router.put(
   authMiddleware.authenticate,
   validateBody(changePasswordSchema),
   ErrorHandler.asyncHandler(authController.changePassword)
+);
+
+router.put(
+  '/update-details',
+  authMiddleware.authenticate,
+  validateBody(updateUserDetailsSchema),
+  ErrorHandler.asyncHandler(authController.updateUserDetails)
 );
 
 export default router;

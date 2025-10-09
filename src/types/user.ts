@@ -14,6 +14,32 @@ export enum UserStatus {
   PENDING = 'pending'
 }
 
+export enum Gender {
+  MALE = 'male',
+  FEMALE = 'female',
+  OTHER = 'other',
+  PREFER_NOT_TO_SAY = 'prefer_not_to_say'
+}
+
+export enum EmploymentStatus {
+  EMPLOYED = 'employed',
+  UNEMPLOYED = 'unemployed',
+  SELF_EMPLOYED = 'self_employed',
+  STUDENT = 'student',
+  RETIRED = 'retired',
+  OTHER = 'other'
+}
+
+export enum AcademyLevel {
+  HIGH_SCHOOL = 'high_school',
+  UNDERGRADUATE = 'undergraduate',
+  GRADUATE = 'graduate',
+  POSTGRADUATE = 'postgraduate',
+  DOCTORATE = 'doctorate',
+  PROFESSIONAL = 'professional',
+  OTHER = 'other'
+}
+
 export interface IUser extends Document {
   _id: Types.ObjectId;
   firstName: string;
@@ -22,7 +48,12 @@ export interface IUser extends Document {
   password: string;
   role: UserRole;
   status: UserStatus;
+  gender?: Gender;
+  employmentStatus?: EmploymentStatus;
+  academyLevel?: AcademyLevel;
   dateOfBirth?: Date;
+  countryOfResidence?: string;
+  stateOfResidence?: string;
   phoneNumber?: string;
   address?: {
     street: string;
@@ -69,7 +100,12 @@ export interface UpdateUserData {
   firstName?: string;
   lastName?: string;
   email?: string;
+  gender?: Gender;
+  employmentStatus?: EmploymentStatus;
+  academyLevel?: AcademyLevel;
   dateOfBirth?: Date;
+  countryOfResidence?: string;
+  stateOfResidence?: string;
   phoneNumber?: string;
   address?: {
     street: string;

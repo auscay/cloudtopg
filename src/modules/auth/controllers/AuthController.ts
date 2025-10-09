@@ -1,12 +1,15 @@
 import { Response } from 'express';
 import { AuthService } from '../services/AuthService';
+import { UserRepository } from '../../user/repositories/UserRepository';
 import { AuthenticatedRequest, ApiResponse } from '../../../types';
 
 export class AuthController {
   private authService: AuthService;
+  private userRepository: UserRepository;
 
   constructor() {
     this.authService = new AuthService();
+    this.userRepository = new UserRepository();
   }
 
   /**
@@ -324,6 +327,50 @@ export class AuthController {
         ...(error instanceof Error && { errors: [error.message] })
       };
       res.status(400).json(response);
+    }
+  };
+
+  /**
+   * Update user details
+   */
+  public updateUserDetails = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    try {
+      if (!req.user) {
+        const response: ApiResponse = {
+          success: false,
+          message: 'User not authenticated'
+        };
+        res.status(401).json(response);
+        return;
+      }
+
+      const updateData = req.body;
+      const updatedUser = await this.userRepository.updateUserDetails(req.user._id, updateData);
+
+      if (!updatedUser) {
+        const response: ApiResponse = {
+          success: false,
+          message: 'Failed to update user details'
+        };
+        res.status(500).json(response);
+        return;
+      }
+
+      const response: ApiResponse = {
+        success: true,
+        message: 'User details updated successfully',
+        data: updatedUser
+      };
+
+      res.status(200).json(response);
+    } catch (error) {
+      console.error('Update user details error:', error);
+      const response: ApiResponse = {
+        success: false,
+        message: error instanceof Error ? error.message : 'Failed to update user details',
+        ...(error instanceof Error && { errors: [error.message] })
+      };
+      res.status(500).json(response);
     }
   };
 }

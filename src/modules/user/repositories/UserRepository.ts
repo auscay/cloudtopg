@@ -1,7 +1,7 @@
 import { Types } from 'mongoose';
 import { User } from '../models/User';
 import { BaseRepository } from './BaseRepository';
-import { IUser, UserRole, UserStatus, CreateUserData } from '../../../types';
+import { IUser, UserRole, UserStatus, CreateUserData, UpdateUserData } from '../../../types';
 
 export class UserRepository extends BaseRepository<IUser> {
   constructor() {
@@ -75,6 +75,13 @@ export class UserRepository extends BaseRepository<IUser> {
    */
   async updateLastLogin(userId: string | Types.ObjectId): Promise<IUser | null> {
     return await this.updateById(userId, { lastLogin: new Date() });
+  }
+
+  /**
+   * Update user details
+   */
+  async updateUserDetails(userId: string | Types.ObjectId, updateData: UpdateUserData): Promise<IUser | null> {
+    return await this.updateById(userId, updateData);
   }
 
   /**

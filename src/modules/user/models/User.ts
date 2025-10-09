@@ -2,7 +2,7 @@ import mongoose, { Schema } from 'mongoose';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { config } from '../../../config';
-import { IUser, UserRole, UserStatus, CreateUserData } from '../../../types';
+import { IUser, UserRole, UserStatus, Gender, EmploymentStatus, AcademyLevel, CreateUserData } from '../../../types';
 
 const userSchema = new Schema<IUser>({
   firstName: {
@@ -47,6 +47,21 @@ const userSchema = new Schema<IUser>({
     default: UserStatus.PENDING,
     required: true
   },
+  gender: {
+    type: String,
+    enum: Object.values(Gender),
+    required: false
+  },
+  employmentStatus: {
+    type: String,
+    enum: Object.values(EmploymentStatus),
+    required: false
+  },
+  academyLevel: {
+    type: String,
+    enum: Object.values(AcademyLevel),
+    required: false
+  },
   dateOfBirth: {
     type: Date,
     validate: {
@@ -55,6 +70,16 @@ const userSchema = new Schema<IUser>({
       },
       message: 'Date of birth must be in the past'
     }
+  },
+  countryOfResidence: {
+    type: String,
+    trim: true,
+    maxlength: [100, 'Country name cannot exceed 100 characters']
+  },
+  stateOfResidence: {
+    type: String,
+    trim: true,
+    maxlength: [100, 'State name cannot exceed 100 characters']
   },
   phoneNumber: {
     type: String,
