@@ -5,33 +5,36 @@ import { config } from '../../../config';
 export interface SendPasswordResetEmailParams {
   email: string;
   userName: string;
-  resetToken: string;
+  resetCode: string;
 }
 
 /**
- * Send password reset email to user
+ * Send password reset email to user with 6-digit code
  */
 export const sendPasswordResetEmail = async (
   params: SendPasswordResetEmailParams
 ): Promise<boolean> => {
   try {
-    const { email, userName, resetToken } = params;
-
-    // Create reset URL
-    const resetUrl = `${config.app.url}/reset-password?token=${resetToken}`;
+    const { email, userName, resetCode } = params;
 
     // Generate email content
     const content = `
       <p>Hello <strong>${userName}</strong>,</p>
       <p>We received a request to reset your password for your ${config.app.name} account.</p>
-      <p>To reset your password, please click the button below:</p>
-      <p style="margin-top: 30px; font-size: 14px; color: #777;">
-        This password reset link will expire in <strong>1 hour</strong>. 
+      <p>To reset your password, please use the code below:</p>
+      
+      <div style="background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); padding: 30px; border-radius: 10px; margin: 30px 0; text-align: center;">
+        <p style="margin: 0 0 10px 0; font-size: 14px; color: #ffffff; opacity: 0.9;">Your password reset code:</p>
+        <p style="margin: 0; font-size: 48px; font-weight: bold; color: #ffffff; letter-spacing: 10px; font-family: 'Courier New', monospace;">${resetCode}</p>
+      </div>
+      
+      <p style="font-size: 14px; color: #777;">
+        This password reset code will expire in <strong>1 hour</strong>. 
         If you didn't request a password reset, you can safely ignore this email.
       </p>
       <div style="background-color: #fef2f2; border-left: 4px solid #dc2626; padding: 15px; margin: 20px 0; border-radius: 4px;">
         <p style="margin: 0; color: #991b1b; font-size: 14px;">
-          <strong>Security Tip:</strong> Never share this link with anyone. 
+          <strong>Security Tip:</strong> Never share this code with anyone. 
           Our team will never ask for your password.
         </p>
       </div>
@@ -39,10 +42,8 @@ export const sendPasswordResetEmail = async (
 
     const html = baseEmailTemplate({
       title: 'Reset Your Password',
-      preheader: 'Reset your password to regain access to your account',
+      preheader: `Your password reset code is ${resetCode}`,
       content,
-      buttonText: 'Reset Password',
-      buttonUrl: resetUrl,
     });
 
     // Generate plain text version
@@ -51,13 +52,13 @@ Hello ${userName},
 
 We received a request to reset your password for your ${config.app.name} account.
 
-To reset your password, please click the link below:
+To reset your password, please use the code below:
 
-${resetUrl}
+PASSWORD RESET CODE: ${resetCode}
 
-This password reset link will expire in 1 hour. If you didn't request a password reset, you can safely ignore this email.
+This password reset code will expire in 1 hour. If you didn't request a password reset, you can safely ignore this email.
 
-Security Tip: Never share this link with anyone. Our team will never ask for your password.
+Security Tip: Never share this code with anyone. Our team will never ask for your password.
 
 Best regards,
 ${config.app.name} Team
@@ -69,7 +70,7 @@ ${config.app.name} Team
     // Send email
     await EmailService.sendEmail({
       to: email,
-      subject: 'Reset Your Password',
+      subject: `Your Password Reset Code: ${resetCode}`,
       html,
       text,
     });

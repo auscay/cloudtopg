@@ -275,7 +275,7 @@ export class AuthService {
       await sendPasswordResetEmail({
         email: user.email,
         userName: `${user.firstName} ${user.lastName}`,
-        resetToken,
+        resetCode: resetToken,
       });
 
       // Return token (for testing purposes, remove in production)
@@ -390,9 +390,9 @@ export class AuthService {
   }
 
   /**
-   * Generate password reset token
+   * Generate password reset token (6-digit code)
    */
   private generatePasswordResetToken(): string {
-    return crypto.randomBytes(32).toString('hex');
+    return Math.floor(100000 + Math.random() * 900000).toString();
   }
 }
