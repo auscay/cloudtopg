@@ -2,7 +2,7 @@ import mongoose, { Schema } from 'mongoose';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { config } from '../../../config';
-import { IUser, UserRole, UserStatus, Gender, EmploymentStatus, AcademyLevel, CreateUserData } from '../../../types';
+import { IUser, UserRole, UserStatus, Gender, EmploymentStatus, AcademyLevel, HowDidYouHearAboutUs, CreateUserData } from '../../../types';
 
 const userSchema = new Schema<IUser>({
   firstName: {
@@ -80,6 +80,11 @@ const userSchema = new Schema<IUser>({
     type: String,
     trim: true,
     maxlength: [100, 'State name cannot exceed 100 characters']
+  },
+  howDidYouHearAboutUs: {
+    type: String,
+    enum: Object.values(HowDidYouHearAboutUs),
+    required: false
   },
   phoneNumber: {
     type: String,

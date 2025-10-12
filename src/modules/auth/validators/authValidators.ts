@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import { UserRole } from '../../../types';
+import { UserRole, HowDidYouHearAboutUs } from '../../../types';
 
 // Common validation schemas
 const emailSchema = Joi.string()
@@ -53,6 +53,12 @@ export const registerSchema = Joi.object({
     .default(UserRole.STUDENT)
     .messages({
       'any.only': `Role must be one of: ${Object.values(UserRole).join(', ')}`
+    }),
+  howDidYouHearAboutUs: Joi.string()
+    .valid(...Object.values(HowDidYouHearAboutUs))
+    .optional()
+    .messages({
+      'any.only': `Must be one of: ${Object.values(HowDidYouHearAboutUs).join(', ')}`
     })
 });
 

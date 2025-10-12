@@ -40,6 +40,15 @@ export enum AcademyLevel {
   OTHER = 'other'
 }
 
+export enum HowDidYouHearAboutUs {
+  SOCIAL_MEDIA = 'social_media',
+  SEARCH_ENGINE = 'search_engine',
+  FRIEND_REFERRAL = 'friend_referral',
+  ADVERTISEMENT = 'advertisement',
+  BLOG_ARTICLE = 'blog_article',
+  OTHER = 'other'
+}
+
 export interface IUser extends Document {
   _id: Types.ObjectId;
   firstName: string;
@@ -54,6 +63,7 @@ export interface IUser extends Document {
   dateOfBirth?: Date;
   countryOfResidence?: string;
   stateOfResidence?: string;
+  howDidYouHearAboutUs?: HowDidYouHearAboutUs;
   phoneNumber?: string;
   address?: {
     street: string;
@@ -85,7 +95,13 @@ export interface CreateUserData {
   email: string;
   password: string;
   role: UserRole;
+  gender?: Gender;
+  employmentStatus?: EmploymentStatus;
+  academyLevel?: AcademyLevel;
   dateOfBirth?: Date;
+  countryOfResidence?: string;
+  stateOfResidence?: string;
+  howDidYouHearAboutUs?: HowDidYouHearAboutUs;
   phoneNumber?: string;
   address?: {
     street: string;
