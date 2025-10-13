@@ -44,7 +44,7 @@ const userSchema = new Schema<IUser>({
   status: {
     type: String,
     enum: Object.values(UserStatus),
-    default: UserStatus.PENDING,
+    default: UserStatus.ACTIVE,
     required: true
   },
   gender: {
@@ -88,11 +88,7 @@ const userSchema = new Schema<IUser>({
   },
   phoneNumber: {
     type: String,
-    trim: true,
-    match: [
-      /^[\+]?[1-9][\d]{0,15}$/,
-      'Please provide a valid phone number'
-    ]
+    trim: true
   },
   address: {
     street: {

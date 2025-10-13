@@ -71,7 +71,9 @@ export class AuthService {
           role: newUser.role,
           status: newUser.status,
           isEmailVerified: newUser.isEmailVerified,
-          lastLogin: new Date()
+          lastLogin: new Date(),
+          ...(newUser.phoneNumber && { phoneNumber: newUser.phoneNumber }),
+          ...(newUser.howDidYouHearAboutUs && { howDidYouHearAboutUs: newUser.howDidYouHearAboutUs })
         },
         tokens
       };

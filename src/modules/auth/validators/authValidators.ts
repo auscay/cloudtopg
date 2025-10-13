@@ -54,6 +54,15 @@ export const registerSchema = Joi.object({
     .messages({
       'any.only': `Role must be one of: ${Object.values(UserRole).join(', ')}`
     }),
+  phoneNumber: Joi.string()
+    .trim()
+    .min(10)
+    .max(15)
+    .optional()
+    .messages({
+      'string.min': 'Phone number must be at least 10 digits',
+      'string.max': 'Phone number cannot exceed 15 digits'
+    }),
   howDidYouHearAboutUs: Joi.string()
     .valid(...Object.values(HowDidYouHearAboutUs))
     .optional()
