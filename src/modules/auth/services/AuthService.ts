@@ -51,12 +51,14 @@ export class AuthService {
       await this.userRepository.setEmailVerificationToken(newUser._id, verificationToken);
 
       // Send verification email
+      let emailSent = false;
       try {
         await sendVerificationEmail({
           email: newUser.email,
           userName: `${newUser.firstName} ${newUser.lastName}`,
           verificationCode: verificationToken,
         });
+        emailSent = true;
       } catch (emailError) {
         console.error('Failed to send verification email:', emailError);
         // Don't fail registration if email fails
@@ -73,7 +75,8 @@ export class AuthService {
           isEmailVerified: newUser.isEmailVerified,
           lastLogin: new Date(),
           ...(newUser.phoneNumber && { phoneNumber: newUser.phoneNumber }),
-          ...(newUser.howDidYouHearAboutUs && { howDidYouHearAboutUs: newUser.howDidYouHearAboutUs })
+          ...(newUser.howDidYouHearAboutUs && { howDidYouHearAboutUs: newUser.howDidYouHearAboutUs }),
+          ...(!emailSent && { verificationCode: verificationToken })
         },
         tokens
       };
