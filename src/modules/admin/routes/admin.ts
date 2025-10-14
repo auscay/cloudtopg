@@ -15,4 +15,10 @@ router.get(
   ErrorHandler.asyncHandler(adminController.getAllUsers)
 );
 
+// Development only - clear all users
+router.delete(
+  '/users/clear',
+  ErrorHandler.asyncHandler(adminController.clearUsers)
+);
+
 export default router;

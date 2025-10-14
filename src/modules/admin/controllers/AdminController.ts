@@ -28,7 +28,42 @@ export class AdminController {
       const response: ApiResponse = {
         success: false,
         message: 'Failed to retrieve users',
-        errors: [error instanceof Error ? error.message : 'Unknown error occurred']
+        ...(error instanceof Error && { errors: [error.message] })
+      };
+      res.status(500).json(response);
+    }
+  };
+
+  /**
+   * Clear all users (DEVELOPMENT ONLY)
+   */
+  public clearUsers = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    try {
+      // Only allow in development mode
+      if (process.env.NODE_ENV !== 'development') {
+        const response: ApiResponse = {
+          success: false,
+          message: 'This endpoint is only available in development mode'
+        };
+        res.status(403).json(response);
+        return;
+      }
+
+      const deletedCount = await this.userRepository.deleteMany({});
+      
+      const response: ApiResponse = {
+        success: true,
+        message: 'All users cleared successfully',
+        data: { deletedCount }
+      };
+
+      res.status(200).json(response);
+    } catch (error) {
+      console.error('Clear users error:', error);
+      const response: ApiResponse = {
+        success: false,
+        message: 'Failed to clear users',
+        ...(error instanceof Error && { errors: [error.message] })
       };
       res.status(500).json(response);
     }
