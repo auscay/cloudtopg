@@ -2,15 +2,18 @@ import crypto from 'crypto';
 import { UserRepository } from '../../user/repositories/UserRepository';
 import { JwtService } from './JwtService';
 import { AuthResponse, CreateUserData, LoginCredentials, AuthTokens } from '../../../types';
-import { UserStatus } from '../../../types';
+import { UserStatus, PaymentPlanType } from '../../../types';
 import { sendVerificationEmail } from '../../email/emails/sendVerificationEmail';
 import { sendPasswordResetEmail } from '../../email/emails/sendPasswordResetEmail';
+import { SubscriptionService } from '../../subscription/services/SubscriptionService';
 
 export class AuthService {
   private userRepository: UserRepository;
+  private subscriptionService: SubscriptionService;
 
   constructor() {
     this.userRepository = new UserRepository();
+    this.subscriptionService = new SubscriptionService();
   }
 
   /**
@@ -29,6 +32,26 @@ export class AuthService {
 
       if (!newUser) {
         throw new Error('Failed to create user');
+      }
+
+      // Create a default pending subscription for the new user
+      try {
+        const pendingSubscription = await this.subscriptionService.createSubscription({
+          userId: newUser._id.toString(),
+          planType: PaymentPlanType.EARLY_BIRD, // Default to early bird plan
+          metadata: {
+            createdDuringRegistration: true,
+            registrationDate: new Date()
+          }
+        });
+
+        // Update user's subscription reference
+        await this.userRepository.updateById(newUser._id.toString(), {
+          subscription: pendingSubscription._id
+        } as any);
+      } catch (subscriptionError) {
+        console.error('Failed to create default subscription:', subscriptionError);
+        // Don't fail registration if subscription creation fails
       }
 
       // Generate tokens

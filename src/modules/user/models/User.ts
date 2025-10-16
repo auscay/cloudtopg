@@ -144,6 +144,11 @@ const userSchema = new Schema<IUser>({
     type: [String],
     default: [],
     select: false
+  },
+  subscription: {
+    type: Schema.Types.ObjectId,
+    ref: 'Subscription',
+    default: null
   }
 }, {
   timestamps: true,
@@ -164,6 +169,7 @@ const userSchema = new Schema<IUser>({
 userSchema.index({ email: 1 }, { unique: true });
 userSchema.index({ role: 1 });
 userSchema.index({ status: 1 });
+userSchema.index({ subscription: 1 });
 userSchema.index({ createdAt: -1 });
 
 // Pre-save middleware to hash password

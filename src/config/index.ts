@@ -52,6 +52,7 @@ interface Config {
     secretKey: string;
     publicKey: string;
     callbackUrl: string;
+    webhookUrl: string;
   };
 }
 
@@ -112,6 +113,7 @@ const config: Config = {
     secretKey: process.env.PAYSTACK_SECRET_KEY || '',
     publicKey: process.env.PAYSTACK_PUBLIC_KEY || '',
     callbackUrl: process.env.PAYSTACK_CALLBACK_URL || 'http://localhost:3000/api/subscriptions/verify',
+    webhookUrl: process.env.PAYSTACK_WEBHOOK_URL || 'http://localhost:3000/api/subscriptions/webhook/paystack',
   },
 };
 

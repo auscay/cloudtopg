@@ -1,5 +1,7 @@
 import { Router } from 'express';
+import express from 'express';
 import { SubscriptionController } from '../controllers/SubscriptionController';
+import { WebhookController } from '../controllers/WebhookController';
 import { authMiddleware } from '../../auth/middleware/auth';
 import { ErrorHandler } from '../../../middleware/errorHandler';
 import { validateBody, validateQuery, validateParams } from '../../../middleware/validation';
@@ -17,6 +19,30 @@ import { UserRole } from '../../../types';
 
 const router = Router();
 const subscriptionController = new SubscriptionController();
+const webhookController = new WebhookController();
+
+// Webhook routes (NO authentication required - these are server-to-server)
+
+/**
+ * @route   POST /api/subscriptions/webhook/paystack
+ * @desc    Handle Paystack webhook events
+ * @access  Public (verified by signature)
+ * @note    Webhook signature verification happens inside the controller
+ */
+router.post(
+  '/webhook/paystack',
+  webhookController.handlePaystackWebhook
+);
+
+/**
+ * @route   POST /api/subscriptions/webhook/test
+ * @desc    Test webhook endpoint (for development)
+ * @access  Public
+ */
+router.post(
+  '/webhook/test',
+  webhookController.testWebhook
+);
 
 // Public routes (require authentication only)
 

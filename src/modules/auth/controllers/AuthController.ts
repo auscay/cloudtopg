@@ -170,10 +170,27 @@ export class AuthController {
         return;
       }
 
+      // Fetch user with populated subscription
+      const userWithSubscription = await this.userRepository.findById(req.user._id.toString());
+      
+      if (!userWithSubscription) {
+        const response: ApiResponse = {
+          success: false,
+          message: 'User not found'
+        };
+        res.status(404).json(response);
+        return;
+      }
+
+      // Populate subscription if it exists
+      if (userWithSubscription.subscription) {
+        await userWithSubscription.populate('subscription');
+      }
+
       const response: ApiResponse = {
         success: true,
         message: 'Profile retrieved successfully',
-        data: req.user
+        data: userWithSubscription
       };
 
       res.status(200).json(response);

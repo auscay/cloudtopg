@@ -2,6 +2,7 @@ import { SubscriptionRepository } from '../repositories/SubscriptionRepository';
 import { TransactionRepository } from '../repositories/TransactionRepository';
 import { PaymentPlanRepository } from '../repositories/PaymentPlanRepository';
 import { PaystackService } from './PaystackService';
+import { User } from '../../user/models/User';
 import {
   ISubscription,
   ITransaction,
@@ -32,9 +33,20 @@ export class SubscriptionService {
    */
   async createSubscription(data: CreateSubscriptionData): Promise<ISubscription> {
     // Check if user already has an active subscription
-    const existingSubscription = await this.subscriptionRepo.findActiveByUserId(data.userId);
-    if (existingSubscription) {
+    const existingActiveSubscription = await this.subscriptionRepo.findActiveByUserId(data.userId);
+    if (existingActiveSubscription) {
       throw new Error('User already has an active subscription');
+    }
+
+    // Check if user has any pending subscriptions
+    const allUserSubscriptions = await this.subscriptionRepo.findByUserId(data.userId);
+    const pendingSubscription = allUserSubscriptions.find(
+      sub => sub.status === SubscriptionStatus.PENDING && sub.amountRemaining > 0
+    );
+    
+    // If a pending subscription exists, return it instead of creating a new one
+    if (pendingSubscription) {
+      return pendingSubscription;
     }
 
     // Get the payment plan
@@ -266,6 +278,14 @@ export class SubscriptionService {
       throw new Error('Failed to update subscription');
     }
 
+    // Update user's subscription reference if subscription is now active
+    if (updatedSubscription.status === SubscriptionStatus.ACTIVE) {
+      await User.findByIdAndUpdate(
+        updatedSubscription.userId,
+        { subscription: updatedSubscription._id }
+      );
+    }
+
     return {
       transaction: updatedTransaction,
       subscription: updatedSubscription
@@ -311,7 +331,17 @@ export class SubscriptionService {
    * Cancel subscription
    */
   async cancelSubscription(id: string, reason?: string): Promise<ISubscription | null> {
-    return this.subscriptionRepo.cancelSubscription(id, reason);
+    const subscription = await this.subscriptionRepo.cancelSubscription(id, reason);
+    
+    // Remove subscription reference from user
+    if (subscription) {
+      await User.findByIdAndUpdate(
+        subscription.userId,
+        { subscription: null }
+      );
+    }
+    
+    return subscription;
   }
 
   /**

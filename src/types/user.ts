@@ -79,6 +79,7 @@ export interface IUser extends Document {
   passwordResetExpires?: Date;
   lastLogin?: Date;
   refreshTokens: string[];
+  subscription?: Types.ObjectId | any; // Reference to active subscription
   createdAt: Date;
   updatedAt: Date;
   
