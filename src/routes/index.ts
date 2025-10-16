@@ -3,6 +3,7 @@ import { ApiResponse } from '../types';
 import authRoutes from '../modules/auth/routes/auth';
 import adminRoutes from '../modules/admin/routes/admin';
 import subscriptionRoutes from '../modules/subscription/routes/subscription';
+import applicationFeeRoutes from '../modules/applicationFee/routes/applicationFee';
 
 const router = Router();
 
@@ -38,6 +39,7 @@ router.get('/version', (req, res) => {
 router.use('/auth', authRoutes);
 router.use('/admin', adminRoutes);
 router.use('/subscriptions', subscriptionRoutes);
+router.use('/application-fee', applicationFeeRoutes);
 
 // Catch-all route for undefined endpoints
 router.use('*', (req, res) => {

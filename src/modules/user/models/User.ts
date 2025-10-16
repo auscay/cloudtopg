@@ -149,6 +149,10 @@ const userSchema = new Schema<IUser>({
     type: Schema.Types.ObjectId,
     ref: 'Subscription',
     default: null
+  },
+  applicationFeePaid: {
+    type: Boolean,
+    default: false
   }
 }, {
   timestamps: true,

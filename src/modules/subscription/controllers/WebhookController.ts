@@ -1,14 +1,17 @@
 import { Request, Response } from 'express';
 import crypto from 'crypto';
 import { SubscriptionService } from '../services/SubscriptionService';
+import { ApplicationFeeService } from '../../applicationFee/services/ApplicationFeeService';
 import { ApiResponse } from '../../../types';
 import { config } from '../../../config';
 
 export class WebhookController {
   private subscriptionService: SubscriptionService;
+  private applicationFeeService: ApplicationFeeService;
 
   constructor() {
     this.subscriptionService = new SubscriptionService();
+    this.applicationFeeService = new ApplicationFeeService();
   }
 
   /**
@@ -91,19 +94,38 @@ export class WebhookController {
         metadata
       });
 
-      // Verify and process the payment
-      const result = await this.subscriptionService.verifyPayment(reference);
+      // Check if this is an application fee payment or subscription payment
+      const paymentType = metadata?.paymentType || 'subscription';
 
-      console.log('Payment verification result:', {
-        reference,
-        subscriptionId: result.subscription._id,
-        status: result.subscription.status,
-        currentSemester: result.subscription.currentSemester,
-        amountPaid: result.subscription.totalAmountPaid
-      });
+      if (paymentType === 'application_fee' || reference.startsWith('APP-')) {
+        // Handle application fee payment
+        const applicationFee = await this.applicationFeeService.verifyPayment(reference);
 
-      // Optional: Send notification email to user
-      // await emailService.sendPaymentConfirmation(customer.email, result);
+        console.log('Application fee payment verified:', {
+          reference,
+          userId: applicationFee.userId,
+          status: applicationFee.status,
+          amount: applicationFee.amount
+        });
+
+        // Optional: Send notification email
+        // await emailService.sendApplicationFeeConfirmation(customer.email, applicationFee);
+
+      } else {
+        // Handle subscription payment
+        const result = await this.subscriptionService.verifyPayment(reference);
+
+        console.log('Subscription payment verification result:', {
+          reference,
+          subscriptionId: result.subscription._id,
+          status: result.subscription.status,
+          currentSemester: result.subscription.currentSemester,
+          amountPaid: result.subscription.totalAmountPaid
+        });
+
+        // Optional: Send notification email
+        // await emailService.sendPaymentConfirmation(customer.email, result);
+      }
 
     } catch (error) {
       console.error('Error handling charge.success:', error);

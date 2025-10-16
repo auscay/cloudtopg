@@ -80,6 +80,7 @@ export interface IUser extends Document {
   lastLogin?: Date;
   refreshTokens: string[];
   subscription?: Types.ObjectId | any; // Reference to active subscription
+  applicationFeePaid?: boolean; // Whether user has paid application fee
   createdAt: Date;
   updatedAt: Date;
   
