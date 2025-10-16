@@ -48,6 +48,11 @@ interface Config {
     name: string;
     url: string;
   };
+  paystack: {
+    secretKey: string;
+    publicKey: string;
+    callbackUrl: string;
+  };
 }
 
 const config: Config = {
@@ -101,6 +106,12 @@ const config: Config = {
   app: {
     name: process.env.APP_NAME || 'Cloud Top G',
     url: process.env.APP_URL || 'http://localhost:3000',
+  },
+
+  paystack: {
+    secretKey: process.env.PAYSTACK_SECRET_KEY || '',
+    publicKey: process.env.PAYSTACK_PUBLIC_KEY || '',
+    callbackUrl: process.env.PAYSTACK_CALLBACK_URL || 'http://localhost:3000/api/subscriptions/verify',
   },
 };
 
