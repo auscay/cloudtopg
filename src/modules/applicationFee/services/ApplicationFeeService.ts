@@ -30,12 +30,12 @@ export class ApplicationFeeService {
     }
 
     // If there's a pending payment, return it
-    if (existingPayment && existingPayment.status === ApplicationFeeStatus.PENDING) {
-      return {
-        applicationFee: existingPayment,
-        paymentUrl: existingPayment.paystackAuthorizationUrl || ''
-      };
-    }
+    // if (existingPayment && existingPayment.status === ApplicationFeeStatus.PENDING) {
+    //   return {
+    //     applicationFee: existingPayment,
+    //     paymentUrl: existingPayment.paystackAuthorizationUrl || ''
+    //   };
+    // }
 
     // Generate unique reference
     const reference = this.paystackService.generateReference().replace('SUB', 'APP');
