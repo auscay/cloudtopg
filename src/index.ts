@@ -2,6 +2,7 @@ import { createApp } from './app';
 import database from './config/database';
 import { config } from './config';
 import { ErrorHandler } from './middleware/errorHandler';
+import { runSeedCustomSuperAdmin, runSeedSuperAdmin } from './modules/admin/scripts/seedSuperAdmin';
 
 // Initialize error handling
 ErrorHandler.initialize();
@@ -10,6 +11,13 @@ const startServer = async (): Promise<void> => {
   try {
     // Connect to database
     await database.connect();
+
+    // Seed super admin after database connection
+    try {
+      await runSeedSuperAdmin()
+    } catch (error) {
+      console.error('Failed to seed super admin:', error);
+    }
 
     // Create Express app
     const app = createApp();

@@ -1,13 +1,26 @@
 import { Response } from 'express';
 import { UserRepository } from '../../user/repositories/UserRepository';
-import { AuthenticatedRequest, ApiResponse } from '../../../types';
+import { AdminRepository } from '../repositories/AdminRepository';
+import { 
+  AuthenticatedRequest, 
+  ApiResponse, 
+  CreateAdminData, 
+  UpdateAdminData, 
+  AdminRole, 
+  AdminStatus, 
+  AdminPermission 
+} from '../../../types';
 
 export class AdminController {
   private userRepository: UserRepository;
+  private adminRepository: AdminRepository;
 
   constructor() {
     this.userRepository = new UserRepository();
+    this.adminRepository = new AdminRepository();
   }
+
+  // ==================== USER MANAGEMENT ====================
 
   /**
    * Get all users (admin only)
@@ -63,6 +76,426 @@ export class AdminController {
       const response: ApiResponse = {
         success: false,
         message: 'Failed to clear users',
+        ...(error instanceof Error && { errors: [error.message] })
+      };
+      res.status(500).json(response);
+    }
+  };
+
+  // ==================== ADMIN MANAGEMENT ====================
+
+  /**
+   * Create a new admin
+   */
+  public createAdmin = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    try {
+      const adminData: CreateAdminData = req.body;
+      const createdBy = req.user?.id;
+
+      // Check if admin with email already exists
+      const existingAdmin = await this.adminRepository.findByEmail(adminData.email);
+      if (existingAdmin) {
+        const response: ApiResponse = {
+          success: false,
+          message: 'Admin with this email already exists'
+        };
+        res.status(409).json(response);
+        return;
+      }
+
+      const admin = await this.adminRepository.createAdmin(adminData, createdBy);
+      
+      const response: ApiResponse = {
+        success: true,
+        message: 'Admin created successfully',
+        data: admin
+      };
+
+      res.status(201).json(response);
+    } catch (error) {
+      console.error('Create admin error:', error);
+      const response: ApiResponse = {
+        success: false,
+        message: 'Failed to create admin',
+        ...(error instanceof Error && { errors: [error.message] })
+      };
+      res.status(500).json(response);
+    }
+  };
+
+  /**
+   * Get all admins with pagination
+   */
+  public getAllAdmins = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    try {
+      const { page = 1, limit = 10, role, status } = req.query;
+      const filters: any = {};
+      
+      if (role) filters.role = role;
+      if (status) filters.status = status;
+
+      const result = await this.adminRepository.getAdminsWithPagination(
+        Number(page), 
+        Number(limit), 
+        filters
+      );
+      
+      const response: ApiResponse = {
+        success: true,
+        message: 'Admins retrieved successfully',
+        data: result
+      };
+
+      res.status(200).json(response);
+    } catch (error) {
+      console.error('Get all admins error:', error);
+      const response: ApiResponse = {
+        success: false,
+        message: 'Failed to retrieve admins',
+        ...(error instanceof Error && { errors: [error.message] })
+      };
+      res.status(500).json(response);
+    }
+  };
+
+  /**
+   * Get admin by ID
+   */
+  public getAdminById = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    try {
+      const { id } = req.params;
+      if (!id) {
+        const response: ApiResponse = {
+          success: false,
+          message: 'Admin ID is required'
+        };
+        res.status(400).json(response);
+        return;
+      }
+      const admin = await this.adminRepository.findById(id);
+
+      if (!admin) {
+        const response: ApiResponse = {
+          success: false,
+          message: 'Admin not found'
+        };
+        res.status(404).json(response);
+        return;
+      }
+
+      const response: ApiResponse = {
+        success: true,
+        message: 'Admin retrieved successfully',
+        data: admin
+      };
+
+      res.status(200).json(response);
+    } catch (error) {
+      console.error('Get admin by ID error:', error);
+      const response: ApiResponse = {
+        success: false,
+        message: 'Failed to retrieve admin',
+        ...(error instanceof Error && { errors: [error.message] })
+      };
+      res.status(500).json(response);
+    }
+  };
+
+  /**
+   * Update admin
+   */
+  public updateAdmin = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    try {
+      const { id } = req.params;
+      const updateData: UpdateAdminData = req.body;
+      const modifiedBy = req.user?.id;
+
+      if (!id) {
+        const response: ApiResponse = {
+          success: false,
+          message: 'Admin ID is required'
+        };
+        res.status(400).json(response);
+        return;
+      }
+
+      const admin = await this.adminRepository.updateAdmin(id, updateData, modifiedBy);
+
+      if (!admin) {
+        const response: ApiResponse = {
+          success: false,
+          message: 'Admin not found'
+        };
+        res.status(404).json(response);
+        return;
+      }
+
+      const response: ApiResponse = {
+        success: true,
+        message: 'Admin updated successfully',
+        data: admin
+      };
+
+      res.status(200).json(response);
+    } catch (error) {
+      console.error('Update admin error:', error);
+      const response: ApiResponse = {
+        success: false,
+        message: 'Failed to update admin',
+        ...(error instanceof Error && { errors: [error.message] })
+      };
+      res.status(500).json(response);
+    }
+  };
+
+  /**
+   * Update admin status
+   */
+  public updateAdminStatus = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    try {
+      const { id } = req.params;
+      const { status } = req.body;
+      const modifiedBy = req.user?.id;
+
+      if (!id) {
+        const response: ApiResponse = {
+          success: false,
+          message: 'Admin ID is required'
+        };
+        res.status(400).json(response);
+        return;
+      }
+
+      const admin = await this.adminRepository.updateStatus(id, status, modifiedBy);
+
+      if (!admin) {
+        const response: ApiResponse = {
+          success: false,
+          message: 'Admin not found'
+        };
+        res.status(404).json(response);
+        return;
+      }
+
+      const response: ApiResponse = {
+        success: true,
+        message: 'Admin status updated successfully',
+        data: admin
+      };
+
+      res.status(200).json(response);
+    } catch (error) {
+      console.error('Update admin status error:', error);
+      const response: ApiResponse = {
+        success: false,
+        message: 'Failed to update admin status',
+        ...(error instanceof Error && { errors: [error.message] })
+      };
+      res.status(500).json(response);
+    }
+  };
+
+  /**
+   * Update admin permissions
+   */
+  public updateAdminPermissions = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    try {
+      const { id } = req.params;
+      const { permissions } = req.body;
+      const modifiedBy = req.user?.id;
+
+      if (!id) {
+        const response: ApiResponse = {
+          success: false,
+          message: 'Admin ID is required'
+        };
+        res.status(400).json(response);
+        return;
+      }
+
+      const admin = await this.adminRepository.updatePermissions(id, permissions, modifiedBy);
+
+      if (!admin) {
+        const response: ApiResponse = {
+          success: false,
+          message: 'Admin not found'
+        };
+        res.status(404).json(response);
+        return;
+      }
+
+      const response: ApiResponse = {
+        success: true,
+        message: 'Admin permissions updated successfully',
+        data: admin
+      };
+
+      res.status(200).json(response);
+    } catch (error) {
+      console.error('Update admin permissions error:', error);
+      const response: ApiResponse = {
+        success: false,
+        message: 'Failed to update admin permissions',
+        ...(error instanceof Error && { errors: [error.message] })
+      };
+      res.status(500).json(response);
+    }
+  };
+
+  /**
+   * Delete admin
+   */
+  public deleteAdmin = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    try {
+      const { id } = req.params;
+
+      // Prevent self-deletion
+      if (req.user?.id === id) {
+        const response: ApiResponse = {
+          success: false,
+          message: 'You cannot delete your own account'
+        };
+        res.status(400).json(response);
+        return;
+      }
+
+      if (!id) {
+        const response: ApiResponse = {
+          success: false,
+          message: 'Admin ID is required'
+        };
+        res.status(400).json(response);
+        return;
+      }
+
+      const admin = await this.adminRepository.deleteById(id);
+
+      if (!admin) {
+        const response: ApiResponse = {
+          success: false,
+          message: 'Admin not found'
+        };
+        res.status(404).json(response);
+        return;
+      }
+
+      const response: ApiResponse = {
+        success: true,
+        message: 'Admin deleted successfully'
+      };
+
+      res.status(200).json(response);
+    } catch (error) {
+      console.error('Delete admin error:', error);
+      const response: ApiResponse = {
+        success: false,
+        message: 'Failed to delete admin',
+        ...(error instanceof Error && { errors: [error.message] })
+      };
+      res.status(500).json(response);
+    }
+  };
+
+  /**
+   * Search admins
+   */
+  public searchAdmins = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    try {
+      const { searchTerm, limit = 10 } = req.query;
+      const admins = await this.adminRepository.searchAdmins(
+        searchTerm as string, 
+        Number(limit)
+      );
+      
+      const response: ApiResponse = {
+        success: true,
+        message: 'Admins search completed',
+        data: admins
+      };
+
+      res.status(200).json(response);
+    } catch (error) {
+      console.error('Search admins error:', error);
+      const response: ApiResponse = {
+        success: false,
+        message: 'Failed to search admins',
+        ...(error instanceof Error && { errors: [error.message] })
+      };
+      res.status(500).json(response);
+    }
+  };
+
+  /**
+   * Get admin statistics
+   */
+  public getAdminStats = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    try {
+      const stats = await this.adminRepository.getStats();
+      
+      const response: ApiResponse = {
+        success: true,
+        message: 'Admin statistics retrieved successfully',
+        data: stats
+      };
+
+      res.status(200).json(response);
+    } catch (error) {
+      console.error('Get admin stats error:', error);
+      const response: ApiResponse = {
+        success: false,
+        message: 'Failed to retrieve admin statistics',
+        ...(error instanceof Error && { errors: [error.message] })
+      };
+      res.status(500).json(response);
+    }
+  };
+
+  /**
+   * Get admins by role
+   */
+  public getAdminsByRole = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    try {
+      const { role } = req.params;
+      const admins = await this.adminRepository.findByRole(role as AdminRole);
+      
+      const response: ApiResponse = {
+        success: true,
+        message: 'Admins retrieved successfully',
+        data: admins
+      };
+
+      res.status(200).json(response);
+    } catch (error) {
+      console.error('Get admins by role error:', error);
+      const response: ApiResponse = {
+        success: false,
+        message: 'Failed to retrieve admins by role',
+        ...(error instanceof Error && { errors: [error.message] })
+      };
+      res.status(500).json(response);
+    }
+  };
+
+  /**
+   * Get admins by permission
+   */
+  public getAdminsByPermission = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    try {
+      const { permission } = req.params;
+      const admins = await this.adminRepository.findByPermission(permission as AdminPermission);
+      
+      const response: ApiResponse = {
+        success: true,
+        message: 'Admins retrieved successfully',
+        data: admins
+      };
+
+      res.status(200).json(response);
+    } catch (error) {
+      console.error('Get admins by permission error:', error);
+      const response: ApiResponse = {
+        success: false,
+        message: 'Failed to retrieve admins by permission',
         ...(error instanceof Error && { errors: [error.message] })
       };
       res.status(500).json(response);

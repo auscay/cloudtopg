@@ -6,8 +6,24 @@ export interface JWTPayload {
   exp?: number;
 }
 
+export interface AdminJWTPayload {
+  adminId: string;
+  role: string;
+  permissions: string[];
+  iat?: number;
+  exp?: number;
+}
+
 export interface RefreshTokenPayload {
   userId: string;
+  tokenVersion: number;
+  iat?: number;
+  exp?: number;
+}
+
+export interface AdminRefreshTokenPayload {
+  adminId: string;
+  role: string;
   tokenVersion: number;
   iat?: number;
   exp?: number;

@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { config } from '../../../config';
-import { JWTPayload, RefreshTokenPayload, AuthTokens } from '../../../types';
+import { JWTPayload, AdminJWTPayload, RefreshTokenPayload, AdminRefreshTokenPayload, AuthTokens } from '../../../types';
 
 export class JwtService {
   /**
@@ -17,6 +17,23 @@ export class JwtService {
       expiresIn: config.jwt.expire,
       issuer: 'educational-management-system',
       audience: 'educational-management-system-users'
+    } as jwt.SignOptions);
+  }
+
+  /**
+   * Generate admin access token
+   */
+  static generateAdminAccessToken(payload: Omit<AdminJWTPayload, 'iat' | 'exp'>): string {
+    const tokenPayload: AdminJWTPayload = {
+      adminId: payload.adminId,
+      role: payload.role,
+      permissions: payload.permissions
+    };
+
+    return jwt.sign(tokenPayload, config.jwt.secret, {
+      expiresIn: config.jwt.expire,
+      issuer: 'educational-management-system',
+      audience: 'educational-management-system-admins'
     } as jwt.SignOptions);
   }
 
@@ -82,6 +99,28 @@ export class JwtService {
   }
 
   /**
+   * Verify admin access token
+   */
+  static verifyAdminAccessToken(token: string): AdminJWTPayload {
+    try {
+      const payload = jwt.verify(token, config.jwt.secret, {
+        issuer: 'educational-management-system',
+        audience: 'educational-management-system-admins'
+      }) as AdminJWTPayload;
+
+      return payload;
+    } catch (error) {
+      if (error instanceof jwt.TokenExpiredError) {
+        throw new Error('Access token has expired');
+      } else if (error instanceof jwt.JsonWebTokenError) {
+        throw new Error('Invalid access token');
+      } else {
+        throw new Error('Token verification failed');
+      }
+    }
+  }
+
+  /**
    * Verify refresh token
    */
   static verifyRefreshToken(token: string): RefreshTokenPayload {
@@ -90,6 +129,28 @@ export class JwtService {
         issuer: 'educational-management-system',
         audience: 'educational-management-system-refresh'
       }) as RefreshTokenPayload;
+
+      return payload;
+    } catch (error) {
+      if (error instanceof jwt.TokenExpiredError) {
+        throw new Error('Refresh token has expired');
+      } else if (error instanceof jwt.JsonWebTokenError) {
+        throw new Error('Invalid refresh token');
+      } else {
+        throw new Error('Refresh token verification failed');
+      }
+    }
+  }
+
+  /**
+   * Verify admin refresh token
+   */
+  static verifyAdminRefreshToken(token: string): AdminRefreshTokenPayload {
+    try {
+      const payload = jwt.verify(token, config.jwt.refreshSecret, {
+        issuer: 'educational-management-system',
+        audience: 'educational-management-system-refresh'
+      }) as AdminRefreshTokenPayload;
 
       return payload;
     } catch (error) {

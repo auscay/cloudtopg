@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { ApiResponse } from '../types';
 import authRoutes from '../modules/auth/routes/auth';
 import adminRoutes from '../modules/admin/routes/admin';
+import adminAuthRoutes from '../modules/admin/routes/adminAuth';
 import subscriptionRoutes from '../modules/subscription/routes/subscription';
 import applicationFeeRoutes from '../modules/applicationFee/routes/applicationFee';
 
@@ -37,6 +38,7 @@ router.get('/version', (req, res) => {
 
 // Mount route modules
 router.use('/auth', authRoutes);
+router.use('/admin/auth', adminAuthRoutes);
 router.use('/admin', adminRoutes);
 router.use('/subscriptions', subscriptionRoutes);
 router.use('/application-fee', applicationFeeRoutes);
