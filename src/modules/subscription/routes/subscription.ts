@@ -15,7 +15,8 @@ import {
   cancelSubscriptionSchema,
   planTypeParamsSchema
 } from '../validators/subscriptionValidators';
-import { UserRole } from '../../../types';
+import { AdminRole, UserRole } from '../../../types';
+import { adminAuthMiddleware } from '../../admin/middleware/adminAuth';
 
 const router = Router();
 const subscriptionController = new SubscriptionController();
@@ -194,8 +195,8 @@ router.patch(
  */
 router.get(
   '/stats/payments',
-  authMiddleware.authenticate,
-  authMiddleware.authorize(UserRole.ADMIN),
+  adminAuthMiddleware.authenticate,
+  adminAuthMiddleware.authorize(AdminRole.SUPER_ADMIN),
   ErrorHandler.asyncHandler(subscriptionController.getPaymentStats)
 );
 

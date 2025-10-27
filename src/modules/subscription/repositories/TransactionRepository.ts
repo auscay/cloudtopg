@@ -57,5 +57,74 @@ export class TransactionRepository extends BaseRepository<ITransaction> {
 
     return result.length > 0 ? result[0].total : 0;
   }
+
+  /**
+   * Get total revenue from application fees
+   */
+  async getTotalApplicationFee(): Promise<number> {
+    const result = await this.model.aggregate([
+      {
+        $match: { 
+          status: TransactionStatus.SUCCESS,
+          'metadata.paymentType': 'application_fee'
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          total: { $sum: '$amount' }
+        }
+      }
+    ]);
+
+    return result.length > 0 ? result[0].total : 0;
+  }
+
+  /**
+   * Get total revenue from subscription payments
+   */
+  async getTotalSubscriptionRevenue(): Promise<number> {
+    const result = await this.model.aggregate([
+      {
+        $match: { 
+          status: TransactionStatus.SUCCESS,
+          $or: [
+            { subscriptionId: { $exists: true } },
+            { planId: { $exists: true } }
+          ],
+          'metadata.paymentType': { $ne: 'application_fee' }
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          total: { $sum: '$amount' }
+        }
+      }
+    ]);
+
+    return result.length > 0 ? result[0].total : 0;
+  }
+
+  /**
+   * Get total number of unique users who made payments
+   */
+  async getTotalUsers(): Promise<number> {
+    const result = await this.model.aggregate([
+      {
+        $match: { status: TransactionStatus.SUCCESS }
+      },
+      {
+        $group: {
+          _id: '$userId'
+        }
+      },
+      {
+        $count: 'total'
+      }
+    ]);
+
+    return result.length > 0 ? result[0].total : 0;
+  }
 }
 

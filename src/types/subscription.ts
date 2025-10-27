@@ -177,11 +177,14 @@ export interface SubscriptionQueryParams {
 
 export interface PaymentStats {
   totalRevenue: number;
+  subscriptionRevenue: number;
+  applicationFeeRevenue: number;
   totalSubscriptions: number;
   activeSubscriptions: number;
   pendingPayments: number;
   earlyBirdSubscriptions: number;
   midSubscriptions: number;
   normalSubscriptions: number;
+  totalUsers: number;
 }
 

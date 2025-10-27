@@ -459,6 +459,9 @@ export class SubscriptionService {
   async getPaymentStats(): Promise<PaymentStats> {
     try {
       const totalRevenue = await this.transactionRepo.getTotalRevenue();
+      const subscriptionRevenue = await this.transactionRepo.getTotalSubscriptionRevenue();
+      const applicationFeeRevenue = await this.transactionRepo.getTotalApplicationFee();
+      const totalUsers = await this.transactionRepo.getTotalUsers();
       
       const allSubscriptions = await this.subscriptionRepo.findAll();
       const activeSubscriptions = await this.subscriptionRepo.findByStatus(SubscriptionStatus.ACTIVE);
@@ -483,12 +486,15 @@ export class SubscriptionService {
 
       return {
         totalRevenue,
+        subscriptionRevenue,
+        applicationFeeRevenue,
         totalSubscriptions: allSubscriptions.length,
         activeSubscriptions: activeSubscriptions.length,
         pendingPayments,
         earlyBirdSubscriptions: earlyBirdSubs,
         midSubscriptions: midSubs,
-        normalSubscriptions: normalSubs
+        normalSubscriptions: normalSubs,
+        totalUsers
       };
     } catch (error) {
       throw new Error(`Failed to get payment stats: ${error instanceof Error ? error.message : 'Unknown error'}`);

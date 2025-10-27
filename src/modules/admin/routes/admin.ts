@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import { AdminController } from '../controllers/AdminController';
-import { authMiddleware } from '../../auth/middleware/auth';
 import { adminAuthMiddleware } from '../middleware/adminAuth';
 import { ErrorHandler } from '../../../middleware/errorHandler';
 import { validate, validateBody, validateQuery, validateParams } from '../../../middleware/validation';
