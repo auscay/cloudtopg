@@ -63,8 +63,8 @@ export interface ISubscription extends Document {
 
 export interface ITransaction extends Document {
   userId: string;
-  subscriptionId: string;
-  planId: string;
+  subscriptionId?: string;
+  planId?: string;
   amount: number;
   currency: string;
   status: TransactionStatus;
@@ -77,6 +77,7 @@ export interface ITransaction extends Document {
     paystackData?: any;
     semestersPaid?: number;
     installmentNumber?: number;
+    paymentType?: string; // Add paymentType to metadata
     [key: string]: any;
   };
   failureReason?: string;

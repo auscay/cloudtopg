@@ -1,21 +1,25 @@
 import { ApplicationFeeRepository } from '../repositories/ApplicationFeeRepository';
 import { PaystackService } from '../../subscription/services/PaystackService';
+import { TransactionRepository } from '../../subscription/repositories/TransactionRepository';
 import { User } from '../../user/models/User';
 import {
   IApplicationFee,
   ApplicationFeeStatus,
   CreateApplicationFeeData,
-  ApplicationFeePaymentResponse
+  ApplicationFeePaymentResponse,
+  TransactionStatus
 } from '../../../types';
 
 export class ApplicationFeeService {
   private applicationFeeRepo: ApplicationFeeRepository;
   private paystackService: PaystackService;
+  private transactionRepo: TransactionRepository;
   private readonly APPLICATION_FEE_AMOUNT = 20000; // ₦20,000
 
   constructor() {
     this.applicationFeeRepo = new ApplicationFeeRepository();
     this.paystackService = new PaystackService();
+    this.transactionRepo = new TransactionRepository();
   }
 
   /**
@@ -71,6 +75,23 @@ export class ApplicationFeeService {
       }
     } as any);
 
+    // Create transaction record
+    await this.transactionRepo.create({
+      userId: data.userId,
+      amount: this.APPLICATION_FEE_AMOUNT,
+      currency: 'NGN',
+      status: TransactionStatus.PENDING,
+      paystackReference: reference,
+      paystackAccessCode: paystackResponse.data.access_code,
+      paystackAuthorizationUrl: paystackResponse.data.authorization_url,
+      metadata: {
+        paystackData: paystackResponse.data,
+        paymentType: 'application_fee',
+        applicationFeeId: (applicationFee as any)._id.toString(),
+        ...data.metadata
+      }
+    } as any);
+
     return {
       applicationFee,
       paymentUrl: paystackResponse.data.authorization_url
@@ -116,6 +137,15 @@ export class ApplicationFeeService {
         throw new Error('Failed to update application fee');
       }
 
+      // Update transaction as failed
+      await this.transactionRepo.updateTransactionStatus(
+        reference,
+        TransactionStatus.FAILED,
+        undefined,
+        { paystackData: paymentData },
+        paymentData.gateway_response
+      );
+
       throw new Error(`Payment failed: ${paymentData.gateway_response}`);
     }
 
@@ -133,6 +163,19 @@ export class ApplicationFeeService {
     if (!updatedFee) {
       throw new Error('Failed to update application fee');
     }
+
+    // Update transaction as successful
+    await this.transactionRepo.updateTransactionStatus(
+      reference,
+      TransactionStatus.SUCCESS,
+      new Date(paymentData.paid_at),
+      {
+        paystackData: paymentData,
+        paymentMethod: paymentData.channel,
+        paymentType: 'application_fee',
+        applicationFeeId: (updatedFee as any)._id.toString()
+      }
+    );
 
     // Update user's application fee payment status
     await User.findByIdAndUpdate(

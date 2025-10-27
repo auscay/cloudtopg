@@ -9,12 +9,10 @@ const transactionSchema = new Schema<ITransaction>({
   },
   subscriptionId: {
     type: String,
-    required: [true, 'Subscription ID is required'],
     ref: 'Subscription'
   },
   planId: {
     type: String,
-    required: [true, 'Plan ID is required'],
     ref: 'PaymentPlan'
   },
   amount: {

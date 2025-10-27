@@ -194,6 +194,9 @@ export class SubscriptionService {
 
       // Check if already processed
       if (transaction.status === TransactionStatus.SUCCESS) {
+        if (!transaction.subscriptionId) {
+          throw new Error('Transaction does not have a subscription ID');
+        }
         const subscription = await this.subscriptionRepo.findById(transaction.subscriptionId);
         if (!subscription) {
           throw new Error('Subscription not found');
@@ -224,7 +227,11 @@ export class SubscriptionService {
       }
 
       // Get subscription and plan
-      const subscription = await this.subscriptionRepo.findById(transaction.subscriptionId);
+      if (!transaction.subscriptionId) {
+        throw new Error('Transaction does not have a subscription ID');
+      }
+      const subscriptionId = transaction.subscriptionId; // Type narrowing
+      const subscription = await this.subscriptionRepo.findById(subscriptionId);
       if (!subscription) {
         throw new Error('Subscription not found');
       }
