@@ -126,10 +126,10 @@ export class SubscriptionService {
         throw new Error('Payment plan not found');
       }
 
-      // Validate payment amount
-      if (data.amount !== plan.installmentAmount) {
-        throw new Error('Invalid payment amount');
-      }
+      // // Validate payment amount
+      // if (data.amount !== plan.installmentAmount) {
+      //   throw new Error('Invalid payment amount');
+      // }
 
       // Generate unique reference
       const reference = this.paystackService.generateReference();
@@ -137,7 +137,7 @@ export class SubscriptionService {
       // Initialize Paystack transaction
       const paystackResponse = await this.paystackService.initializeTransaction(
         data.email,
-        data.amount,
+        plan.installmentAmount,
         reference,
         {
           subscriptionId: (subscription._id as any).toString(),
@@ -156,7 +156,7 @@ export class SubscriptionService {
         userId: data.userId,
         subscriptionId: (subscription._id as any).toString(),
         planId: (plan._id as any).toString(),
-        amount: data.amount,
+        amount: plan.installmentAmount,
         currency: 'NGN',
         status: TransactionStatus.PENDING,
         paystackReference: reference,
