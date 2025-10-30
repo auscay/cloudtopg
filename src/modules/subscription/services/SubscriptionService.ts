@@ -462,6 +462,7 @@ export class SubscriptionService {
       const subscriptionRevenue = await this.transactionRepo.getTotalSubscriptionRevenue();
       const applicationFeeRevenue = await this.transactionRepo.getTotalApplicationFee();
       const totalUsers = await this.transactionRepo.getTotalUsers();
+      const applicationFeePaidUsers = await User.countDocuments({ applicationFeePaid: true });
       
       const allSubscriptions = await this.subscriptionRepo.findAll();
       const activeSubscriptions = await this.subscriptionRepo.findByStatus(SubscriptionStatus.ACTIVE);
@@ -494,7 +495,8 @@ export class SubscriptionService {
         earlyBirdSubscriptions: earlyBirdSubs,
         midSubscriptions: midSubs,
         normalSubscriptions: normalSubs,
-        totalUsers
+        totalUsers,
+        applicationFeePaidUsers
       };
     } catch (error) {
       throw new Error(`Failed to get payment stats: ${error instanceof Error ? error.message : 'Unknown error'}`);

@@ -186,5 +186,6 @@ export interface PaymentStats {
   midSubscriptions: number;
   normalSubscriptions: number;
   totalUsers: number;
+  applicationFeePaidUsers: number;
 }
 
