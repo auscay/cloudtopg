@@ -81,18 +81,17 @@ export class AdminAuthController {
         success: true,
         message: 'Login successful',
         data: {
-          admin: {
+          user: {
             _id: admin._id,
             firstName: admin.firstName,
             lastName: admin.lastName,
             email: admin.email,
-            role: admin.role,
-            permissions: admin.permissions,
-            profilePicture: admin.profilePicture,
-            lastLogin: admin.lastLogin
+            role: admin.role
           },
-          accessToken,
-          refreshToken
+          tokens: {
+            accessToken,
+            refreshToken
+          }
         }
       };
 
