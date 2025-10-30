@@ -19,6 +19,11 @@ const router = Router();
 const authController = new AuthController();
 
 // Public routes
+router.get(
+  '/options/how-did-you-hear',
+  ErrorHandler.asyncHandler(authController.getHowDidYouHearOptions)
+);
+
 router.post(
   '/register',
   validateBody(registerSchema),

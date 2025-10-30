@@ -1,7 +1,7 @@
 import { Response } from 'express';
 import { AuthService } from '../services/AuthService';
 import { UserRepository } from '../../user/repositories/UserRepository';
-import { AuthenticatedRequest, ApiResponse } from '../../../types';
+import { AuthenticatedRequest, ApiResponse, HowDidYouHearAboutUs } from '../../../types';
 
 export class AuthController {
   private authService: AuthService;
@@ -11,6 +11,46 @@ export class AuthController {
     this.authService = new AuthService();
     this.userRepository = new UserRepository();
   }
+
+  /**
+   * Public: Get signup select options (How did you hear about us)
+   */
+  public getHowDidYouHearOptions = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    try {
+      const labels: Record<HowDidYouHearAboutUs, string> = {
+        [HowDidYouHearAboutUs.WHATSAPP]: 'WhatsApp',
+        [HowDidYouHearAboutUs.TWITTER]: 'Twitter',
+        [HowDidYouHearAboutUs.INSTAGRAM]: 'Instagram',
+        [HowDidYouHearAboutUs.LINKEDIN]: 'LinkedIn',
+        [HowDidYouHearAboutUs.FACEBOOK]: 'Facebook',
+        [HowDidYouHearAboutUs.GOOGLE_SEARCH]: 'Google Search',
+        [HowDidYouHearAboutUs.FRIEND_REFERRAL]: 'Friend/Referral',
+        [HowDidYouHearAboutUs.EVENT_CONFERENCE]: 'Event / Conference',
+        [HowDidYouHearAboutUs.BLOG_ARTICLE]: 'Blog / Article',
+        [HowDidYouHearAboutUs.OTHER]: 'Other'
+      };
+
+      const options = (Object.values(HowDidYouHearAboutUs) as HowDidYouHearAboutUs[]).map(value => ({
+        value,
+        label: labels[value]
+      }));
+
+      const response: ApiResponse = {
+        success: true,
+        message: 'Options retrieved successfully',
+        data: { options }
+      };
+
+      res.status(200).json(response);
+    } catch (error) {
+      const response: ApiResponse = {
+        success: false,
+        message: 'Failed to retrieve options',
+        ...(error instanceof Error && { errors: [error.message] })
+      };
+      res.status(500).json(response);
+    }
+  };
 
   /**
    * Register a new user

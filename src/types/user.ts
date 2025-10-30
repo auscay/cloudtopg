@@ -41,10 +41,14 @@ export enum AcademyLevel {
 }
 
 export enum HowDidYouHearAboutUs {
-  SOCIAL_MEDIA = 'social_media',
-  SEARCH_ENGINE = 'search_engine',
+  WHATSAPP = 'whatsapp',
+  TWITTER = 'twitter',
+  INSTAGRAM = 'instagram',
+  LINKEDIN = 'linkedin',
+  FACEBOOK = 'facebook',
+  GOOGLE_SEARCH = 'google_search',
   FRIEND_REFERRAL = 'friend_referral',
-  ADVERTISEMENT = 'advertisement',
+  EVENT_CONFERENCE = 'event_conference',
   BLOG_ARTICLE = 'blog_article',
   OTHER = 'other'
 }
