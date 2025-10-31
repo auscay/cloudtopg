@@ -124,8 +124,8 @@ export class AuthService {
         throw new Error('Invalid email or password');
       }
 
-      // Check if user is active
-      if (user.status !== UserStatus.ACTIVE) {
+      // Check if user is enrolled or admitted (can login)
+      if (user.status === UserStatus.WITHDRAWN) {
         throw new Error('Account is not active. Please contact administrator.');
       }
 

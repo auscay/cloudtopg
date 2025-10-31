@@ -9,7 +9,8 @@ import {
   AdminRole, 
   AdminStatus, 
   AdminPermission, 
-  HowDidYouHearAboutUs 
+  HowDidYouHearAboutUs,
+  UserStatus 
 } from '../../../types';
 import { User } from '../../user/models/User';
 
@@ -26,10 +27,22 @@ export class AdminController {
 
   /**
    * Get all users (admin only)
+   * Supports filtering by status and howDidYouHearAboutUs
    */
   public getAllUsers = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
-      const users = await this.userRepository.findMany();
+      const { status, howDidYouHearAboutUs } = req.query;
+      const filters: any = {};
+      
+      if (status) {
+        filters.status = status as UserStatus;
+      }
+      
+      if (howDidYouHearAboutUs) {
+        filters.howDidYouHearAboutUs = howDidYouHearAboutUs as HowDidYouHearAboutUs;
+      }
+
+      const users = await this.userRepository.findMany(filters);
       
       const response: ApiResponse = {
         success: true,

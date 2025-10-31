@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import { AdminRole, AdminStatus, AdminPermission } from '../../../types';
+import { AdminRole, AdminStatus, AdminPermission, UserStatus, HowDidYouHearAboutUs } from '../../../types';
 
 // Common validation schemas
 const emailSchema = Joi.string()
@@ -239,4 +239,20 @@ export const refreshTokenSchema = Joi.object({
   refreshToken: Joi.string().required().messages({
     'any.required': 'Refresh token is required'
   })
+});
+
+// User filters validation schema
+export const userFiltersSchema = Joi.object({
+  status: Joi.string()
+    .valid(...Object.values(UserStatus))
+    .optional()
+    .messages({
+      'any.only': `Status must be one of: ${Object.values(UserStatus).join(', ')}`
+    }),
+  howDidYouHearAboutUs: Joi.string()
+    .valid(...Object.values(HowDidYouHearAboutUs))
+    .optional()
+    .messages({
+      'any.only': `Source must be one of: ${Object.values(HowDidYouHearAboutUs).join(', ')}`
+    })
 });

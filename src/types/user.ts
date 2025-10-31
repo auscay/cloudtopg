@@ -8,10 +8,10 @@ export enum UserRole {
 }
 
 export enum UserStatus {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive',
-  SUSPENDED = 'suspended',
-  PENDING = 'pending'
+  APPLIED = 'applied',
+  ENROLLED = 'enrolled',
+  ADMITTED = 'admitted',
+  WITHDRAWN = 'withdrawn'
 }
 
 export enum Gender {

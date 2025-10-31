@@ -41,8 +41,8 @@ export class AuthMiddleware {
         return;
       }
 
-      // Check if user is active
-      if (user.status !== UserStatus.ACTIVE) {
+      // Check if user is withdrawn (can access)
+      if (user.status === UserStatus.WITHDRAWN) {
         const response: ApiResponse = {
           success: false,
           message: 'Account is not active'

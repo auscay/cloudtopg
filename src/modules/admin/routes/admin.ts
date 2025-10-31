@@ -15,7 +15,8 @@ import {
   updateAdminPermissionsSchema,
   adminSearchSchema,
   adminPaginationSchema,
-  adminIdSchema
+  adminIdSchema,
+  userFiltersSchema
 } from '../validators/adminValidators';
 
 const router = Router();
@@ -28,6 +29,7 @@ router.get(
   '/users',
   adminAuthMiddleware.authenticate,
   adminAuthMiddleware.authorize(AdminRole.ADMIN),
+  validateQuery(userFiltersSchema),
   ErrorHandler.asyncHandler(adminController.getAllUsers)
 );
 

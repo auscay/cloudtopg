@@ -57,10 +57,12 @@ export class UserRepository extends BaseRepository<IUser> {
   }
 
   /**
-   * Find active users
+   * Find active users (not withdrawn)
    */
   async findActiveUsers(): Promise<IUser[]> {
-    return await this.findMany({ status: UserStatus.ACTIVE });
+    return await this.findMany({ 
+      status: { $in: [UserStatus.ENROLLED, UserStatus.ADMITTED, UserStatus.APPLIED] }
+    });
   }
 
   /**

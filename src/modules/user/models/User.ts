@@ -44,7 +44,7 @@ const userSchema = new Schema<IUser>({
   status: {
     type: String,
     enum: Object.values(UserStatus),
-    default: UserStatus.ACTIVE,
+    default: UserStatus.APPLIED,
     required: true
   },
   gender: {
