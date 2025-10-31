@@ -8,8 +8,10 @@ import {
   UpdateAdminData, 
   AdminRole, 
   AdminStatus, 
-  AdminPermission 
+  AdminPermission, 
+  HowDidYouHearAboutUs 
 } from '../../../types';
+import { User } from '../../user/models/User';
 
 export class AdminController {
   private userRepository: UserRepository;
@@ -117,6 +119,76 @@ export class AdminController {
       const response: ApiResponse = {
         success: false,
         message: 'Failed to create admin',
+        ...(error instanceof Error && { errors: [error.message] })
+      };
+      res.status(500).json(response);
+    }
+  };
+
+  /**
+   * Get Marketing Funnel stats (counts by howDidYouHearAboutUs)
+   */
+  public getMarketingFunnelStats = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    try {
+      // Aggregate counts by howDidYouHearAboutUs
+      const raw = await User.aggregate([
+        {
+          $group: {
+            _id: {
+              $ifNull: ['$howDidYouHearAboutUs', HowDidYouHearAboutUs.OTHER]
+            },
+            count: { $sum: 1 }
+          }
+        }
+      ]);
+
+      const labels: Record<HowDidYouHearAboutUs, string> = {
+        [HowDidYouHearAboutUs.WHATSAPP]: 'Whatsapp',
+        [HowDidYouHearAboutUs.TWITTER]: 'Twitter',
+        [HowDidYouHearAboutUs.INSTAGRAM]: 'Instagram',
+        [HowDidYouHearAboutUs.LINKEDIN]: 'Linkedin',
+        [HowDidYouHearAboutUs.FACEBOOK]: 'Facebook',
+        [HowDidYouHearAboutUs.GOOGLE_SEARCH]: 'Google Search',
+        [HowDidYouHearAboutUs.FRIEND_REFERRAL]: 'Friend/Referral',
+        [HowDidYouHearAboutUs.EVENT_CONFERENCE]: 'Event/ Conference',
+        [HowDidYouHearAboutUs.BLOG_ARTICLE]: 'Blog/ Article',
+        [HowDidYouHearAboutUs.OTHER]: 'Other'
+      };
+
+      const countsMap = new Map<string, number>();
+      raw.forEach((r: any) => countsMap.set(r._id, r.count));
+
+      const orderedValues = [
+        HowDidYouHearAboutUs.WHATSAPP,
+        HowDidYouHearAboutUs.FRIEND_REFERRAL,
+        HowDidYouHearAboutUs.FACEBOOK,
+        HowDidYouHearAboutUs.LINKEDIN,
+        HowDidYouHearAboutUs.TWITTER,
+        HowDidYouHearAboutUs.INSTAGRAM,
+        HowDidYouHearAboutUs.GOOGLE_SEARCH,
+        HowDidYouHearAboutUs.EVENT_CONFERENCE,
+        HowDidYouHearAboutUs.BLOG_ARTICLE,
+        HowDidYouHearAboutUs.OTHER
+      ] as HowDidYouHearAboutUs[];
+
+      const data = orderedValues.map(value => ({
+        value,
+        label: labels[value],
+        count: countsMap.get(value) || 0
+      }));
+
+      const response: ApiResponse = {
+        success: true,
+        message: 'Marketing funnel stats retrieved successfully',
+        data
+      };
+
+      res.status(200).json(response);
+    } catch (error) {
+      console.error('Get marketing funnel stats error:', error);
+      const response: ApiResponse = {
+        success: false,
+        message: 'Failed to retrieve marketing funnel stats',
         ...(error instanceof Error && { errors: [error.message] })
       };
       res.status(500).json(response);

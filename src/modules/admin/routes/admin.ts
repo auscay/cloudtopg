@@ -65,6 +65,14 @@ router.get(
   ErrorHandler.asyncHandler(adminController.getAdminStats)
 );
 
+// Marketing funnel stats (Admin only)
+router.get(
+  '/stats/marketing-funnel',
+  adminAuthMiddleware.authenticate,
+  adminAuthMiddleware.authorize(AdminRole.ADMIN),
+  ErrorHandler.asyncHandler(adminController.getMarketingFunnelStats)
+);
+
 // Search admins
 router.get(
   '/search',
