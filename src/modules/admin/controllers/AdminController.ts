@@ -63,6 +63,50 @@ export class AdminController {
   };
 
   /**
+   * Get user by ID (admin only)
+   */
+  public getUserById = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    try {
+      const { id } = req.params;
+      if (!id) {
+        const response: ApiResponse = {
+          success: false,
+          message: 'User ID is required'
+        };
+        res.status(400).json(response);
+        return;
+      }
+      
+      const user = await this.userRepository.findById(id);
+
+      if (!user) {
+        const response: ApiResponse = {
+          success: false,
+          message: 'User not found'
+        };
+        res.status(404).json(response);
+        return;
+      }
+
+      const response: ApiResponse = {
+        success: true,
+        message: 'User retrieved successfully',
+        data: user
+      };
+
+      res.status(200).json(response);
+    } catch (error) {
+      console.error('Get user by ID error:', error);
+      const response: ApiResponse = {
+        success: false,
+        message: 'Failed to retrieve user',
+        ...(error instanceof Error && { errors: [error.message] })
+      };
+      res.status(500).json(response);
+    }
+  };
+
+  /**
    * Clear all users (DEVELOPMENT ONLY)
    */
   public clearUsers = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
@@ -101,6 +145,7 @@ export class AdminController {
 
   /**
    * Create a new admin
+   * Role is automatically set to ADMIN by default in the controller
    */
   public createAdmin = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
@@ -118,7 +163,13 @@ export class AdminController {
         return;
       }
 
-      const admin = await this.adminRepository.createAdmin(adminData, createdBy);
+      // Force role to ADMIN (cannot be overridden)
+      const adminDataWithRole: CreateAdminData = {
+        ...adminData,
+        role: AdminRole.ADMIN
+      };
+
+      const admin = await this.adminRepository.createAdmin(adminDataWithRole, createdBy);
       
       const response: ApiResponse = {
         success: true,

@@ -45,22 +45,9 @@ const profilePictureSchema = Joi.string()
 // Create admin validation schema
 export const createAdminSchema = Joi.object({
   firstName: nameSchema,
-  lastName: nameSchema,
+  lastName: nameSchema.optional(),
   email: emailSchema,
   password: passwordSchema,
-  confirmPassword: Joi.string()
-    .valid(Joi.ref('password'))
-    .required()
-    .messages({
-      'any.only': 'Passwords do not match',
-      'any.required': 'Password confirmation is required'
-    }),
-  role: Joi.string()
-    .valid(...Object.values(AdminRole))
-    .default(AdminRole.ADMIN)
-    .messages({
-      'any.only': `Role must be one of: ${Object.values(AdminRole).join(', ')}`
-    }),
   permissions: Joi.array()
     .items(Joi.string().valid(...Object.values(AdminPermission)))
     .optional()
@@ -68,7 +55,7 @@ export const createAdminSchema = Joi.object({
       'array.items': `Permissions must be one of: ${Object.values(AdminPermission).join(', ')}`
     }),
   profilePicture: profilePictureSchema
-});
+}).unknown(false); // Prevent any additional fields including 'role'
 
 // Update admin validation schema
 export const updateAdminSchema = Joi.object({
@@ -209,6 +196,17 @@ export const adminIdSchema = Joi.object({
     .messages({
       'string.pattern.base': 'Invalid admin ID format',
       'any.required': 'Admin ID is required'
+    })
+});
+
+// User ID validation schema
+export const userIdSchema = Joi.object({
+  id: Joi.string()
+    .pattern(/^[0-9a-fA-F]{24}$/)
+    .required()
+    .messages({
+      'string.pattern.base': 'Invalid user ID format',
+      'any.required': 'User ID is required'
     })
 });
 

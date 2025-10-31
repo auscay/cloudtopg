@@ -68,10 +68,10 @@ export interface IAdmin extends Document {
 
 export interface CreateAdminData {
   firstName: string;
-  lastName: string;
+  lastName?: string;
   email: string;
   password: string;
-  role: AdminRole;
+  role?: AdminRole; // Optional - will be set to ADMIN by default in controller
   permissions?: AdminPermission[];
   phoneNumber?: string;
   profilePicture?: string;

@@ -21,7 +21,7 @@ const adminSchema = new Schema<IAdmin>({
   },
   lastName: {
     type: String,
-    required: [true, 'Last name is required'],
+    required: false,
     trim: true,
     minlength: [2, 'Last name must be at least 2 characters long'],
     maxlength: [50, 'Last name cannot exceed 50 characters']
@@ -213,7 +213,7 @@ adminSchema.statics.findByPermission = function(permission: AdminPermission) {
 
 // Virtual for full name
 adminSchema.virtual('fullName').get(function() {
-  return `${this.firstName} ${this.lastName}`;
+  return this.lastName ? `${this.firstName} ${this.lastName}` : this.firstName;
 });
 
 // Ensure virtual fields are serialized

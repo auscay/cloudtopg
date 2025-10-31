@@ -16,7 +16,8 @@ import {
   adminSearchSchema,
   adminPaginationSchema,
   adminIdSchema,
-  userFiltersSchema
+  userFiltersSchema,
+  userIdSchema
 } from '../validators/adminValidators';
 
 const router = Router();
@@ -31,6 +32,15 @@ router.get(
   adminAuthMiddleware.authorize(AdminRole.ADMIN),
   validateQuery(userFiltersSchema),
   ErrorHandler.asyncHandler(adminController.getAllUsers)
+);
+
+// Get user by ID (admin only)
+router.get(
+  '/users/:id',
+  adminAuthMiddleware.authenticate,
+  adminAuthMiddleware.authorize(AdminRole.ADMIN),
+  validateParams(userIdSchema),
+  ErrorHandler.asyncHandler(adminController.getUserById)
 );
 
 // Development only - clear all users
