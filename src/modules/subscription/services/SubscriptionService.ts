@@ -39,16 +39,16 @@ export class SubscriptionService {
         throw new Error('User already has an active subscription');
       }
 
-      // Check if user has any pending subscriptions
-      const allUserSubscriptions = await this.subscriptionRepo.findByUserId(data.userId);
-      const pendingSubscription = allUserSubscriptions.find(
-        sub => sub.status === SubscriptionStatus.PENDING && sub.amountRemaining > 0
-      );
+      // // Check if user has any pending subscriptions
+      // const allUserSubscriptions = await this.subscriptionRepo.findByUserId(data.userId);
+      // const pendingSubscription = allUserSubscriptions.find(
+      //   sub => sub.status === SubscriptionStatus.PENDING && sub.amountRemaining > 0
+      // );
       
-      // If a pending subscription exists, return it instead of creating a new one
-      if (pendingSubscription) {
-        return pendingSubscription;
-      }
+      // // If a pending subscription exists, return it instead of creating a new one
+      // if (pendingSubscription) {
+      //   return pendingSubscription;
+      // }
 
       // Get the payment plan
       const plan = await this.planRepo.findByType(data.planType);
@@ -120,11 +120,15 @@ export class SubscriptionService {
         });
       }
 
+      console.log('subscription', subscription);
+
       // Get payment plan
       const plan = await this.planRepo.findById(subscription.planId);
       if (!plan) {
         throw new Error('Payment plan not found');
       }
+
+      console.log('plan', plan);
 
       // // Validate payment amount
       // if (data.amount !== plan.installmentAmount) {
