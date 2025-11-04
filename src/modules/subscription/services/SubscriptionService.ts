@@ -12,7 +12,8 @@ import {
   TransactionStatus,
   CreateSubscriptionData,
   InitiatePaymentData,
-  PaymentStats
+  PaymentStats,
+  UserStatus
 } from '../../../types';
 
 export class SubscriptionService {
@@ -299,10 +300,23 @@ export class SubscriptionService {
       }
 
       // Update user's subscription reference if subscription is now active
+      // Also update user status to ADMITTED when they pay school fees (first payment)
+      const isFirstPayment = subscription.totalAmountPaid === 0;
+      const updateData: any = {};
+      
       if (updatedSubscription.status === SubscriptionStatus.ACTIVE) {
+        updateData.subscription = updatedSubscription._id;
+      }
+      
+      // Update user status to ADMITTED on first successful school fees payment
+      if (isFirstPayment) {
+        updateData.status = UserStatus.ADMITTED;
+      }
+      
+      if (Object.keys(updateData).length > 0) {
         await User.findByIdAndUpdate(
           updatedSubscription.userId,
-          { subscription: updatedSubscription._id }
+          updateData
         );
       }
 

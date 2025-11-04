@@ -283,7 +283,7 @@ export class AuthService {
   /**
    * Request password reset
    */
-  async forgotPassword(email: string): Promise<string> {
+  async forgotPassword(email: string): Promise<{ token: string; emailSent: boolean }> {
     try {
       // Find user by email
       const user = await this.userRepository.findByEmail(email);
@@ -300,14 +300,23 @@ export class AuthService {
       await this.userRepository.setPasswordResetToken(user._id, resetToken, resetExpires);
 
       // Send password reset email
-      await sendPasswordResetEmail({
-        email: user.email,
-        userName: `${user.firstName} ${user.lastName}`,
-        resetCode: resetToken,
-      });
+      let emailSent = false;
+      try {
+        await sendPasswordResetEmail({
+          email: user.email,
+          userName: `${user.firstName} ${user.lastName}`,
+          resetCode: resetToken,
+        });
+        emailSent = true;
+      } catch (emailError) {
+        console.error('Failed to send password reset email:', emailError);
+        // Don't fail password reset request if email fails
+      }
 
-      // Return token (for testing purposes, remove in production)
-      return resetToken;
+      return {
+        token: resetToken,
+        emailSent
+      };
     } catch (error) {
       if (error instanceof Error) {
         throw error;

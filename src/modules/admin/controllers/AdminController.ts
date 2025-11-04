@@ -42,7 +42,8 @@ export class AdminController {
         filters.howDidYouHearAboutUs = howDidYouHearAboutUs as HowDidYouHearAboutUs;
       }
 
-      const users = await this.userRepository.findMany(filters);
+      // Find users with populated subscription field
+      const users = await User.find(filters).populate('subscription');
       
       const response: ApiResponse = {
         success: true,
@@ -77,7 +78,8 @@ export class AdminController {
         return;
       }
       
-      const user = await this.userRepository.findById(id);
+      // Find user with populated subscription field
+      const user = await User.findById(id).populate('subscription');
 
       if (!user) {
         const response: ApiResponse = {
@@ -141,6 +143,54 @@ export class AdminController {
     }
   };
 
+  /**
+   * Get user counts by status (admin only)
+   */
+  public getUserStatusCounts = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    try {
+      // Aggregate users by status
+      const raw = await User.aggregate([
+        {
+          $group: {
+            _id: {
+              $ifNull: ['$status', UserStatus.APPLIED]
+            },
+            count: { $sum: 1 }
+          }
+        }
+      ]);
+
+      // Transform aggregation results into object format
+      const statusCounts: Record<string, number> = {};
+      
+      // Initialize all statuses with 0
+      Object.values(UserStatus).forEach(status => {
+        statusCounts[status] = 0;
+      });
+
+      // Fill in actual counts
+      raw.forEach((r: any) => {
+        statusCounts[r._id] = r.count;
+      });
+
+      const response: ApiResponse = {
+        success: true,
+        message: 'User status counts retrieved successfully',
+        data: statusCounts
+      };
+
+      res.status(200).json(response);
+    } catch (error) {
+      console.error('Get user status counts error:', error);
+      const response: ApiResponse = {
+        success: false,
+        message: 'Failed to retrieve user status counts',
+        ...(error instanceof Error && { errors: [error.message] })
+      };
+      res.status(500).json(response);
+    }
+  };
+
   // ==================== ADMIN MANAGEMENT ====================
 
   /**
@@ -166,7 +216,7 @@ export class AdminController {
       // Force role to ADMIN (cannot be overridden)
       const adminDataWithRole: CreateAdminData = {
         ...adminData,
-        role: AdminRole.ADMIN
+        role: AdminRole.SUPER_ADMIN
       };
 
       const admin = await this.adminRepository.createAdmin(adminDataWithRole, createdBy);

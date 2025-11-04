@@ -7,7 +7,8 @@ import {
   ApplicationFeeStatus,
   CreateApplicationFeeData,
   ApplicationFeePaymentResponse,
-  TransactionStatus
+  TransactionStatus,
+  UserStatus
 } from '../../../types';
 
 export class ApplicationFeeService {
@@ -177,10 +178,13 @@ export class ApplicationFeeService {
       }
     );
 
-    // Update user's application fee payment status
+    // Update user's application fee payment status and change status to ENROLLED
     await User.findByIdAndUpdate(
       applicationFee.userId,
-      { applicationFeePaid: true }
+      { 
+        applicationFeePaid: true,
+        status: UserStatus.ENROLLED
+      }
     );
 
     return updatedFee;

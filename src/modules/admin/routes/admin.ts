@@ -43,6 +43,14 @@ router.get(
   ErrorHandler.asyncHandler(adminController.getUserById)
 );
 
+// Get user counts by status (admin only)
+router.get(
+  '/users/stats/status',
+  adminAuthMiddleware.authenticate,
+  adminAuthMiddleware.authorize(AdminRole.ADMIN),
+  ErrorHandler.asyncHandler(adminController.getUserStatusCounts)
+);
+
 // Development only - clear all users
 router.delete(
   '/users/clear',

@@ -314,13 +314,16 @@ export class AuthController {
   public forgotPassword = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
       const { email } = req.body;
-      const resetToken = await this.authService.forgotPassword(email);
+      const { token, emailSent } = await this.authService.forgotPassword(email);
 
       const response: ApiResponse = {
         success: true,
-        message: 'Password reset instructions have been sent to your email',
-        // In production, don't send the token in response - send it via email
-        // data: { resetToken }
+        message: emailSent 
+          ? 'Password reset instructions have been sent to your email'
+          : 'Password reset request processed. Please check your email for instructions.',
+        data: {
+          ...(emailSent ? {} : { resetToken: token })
+        }
       };
 
       res.status(200).json(response);
