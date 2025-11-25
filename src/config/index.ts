@@ -78,7 +78,7 @@ const config: Config = {
   },
   
   cors: {
-    origin: process.env.CORS_ORIGIN?.split(',') || ['http://localhost:3000'],
+    origin: process.env.CORS_ORIGIN?.split(',') || ['http://localhost:3000', 'https://cloud-school-three.vercel.app'],
   },
   
   logging: {
