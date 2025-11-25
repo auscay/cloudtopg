@@ -254,3 +254,14 @@ export const userFiltersSchema = Joi.object({
       'any.only': `Source must be one of: ${Object.values(HowDidYouHearAboutUs).join(', ')}`
     })
 });
+
+// Update user status validation schema
+export const updateUserStatusSchema = Joi.object({
+  status: Joi.string()
+    .valid(...Object.values(UserStatus))
+    .required()
+    .messages({
+      'any.only': `Status must be one of: ${Object.values(UserStatus).join(', ')}`,
+      'any.required': 'Status is required'
+    })
+});

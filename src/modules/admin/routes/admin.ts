@@ -17,7 +17,8 @@ import {
   adminPaginationSchema,
   adminIdSchema,
   userFiltersSchema,
-  userIdSchema
+  userIdSchema,
+  updateUserStatusSchema
 } from '../validators/adminValidators';
 
 const router = Router();
@@ -49,6 +50,16 @@ router.get(
   adminAuthMiddleware.authenticate,
   adminAuthMiddleware.authorize(AdminRole.ADMIN),
   ErrorHandler.asyncHandler(adminController.getUserStatusCounts)
+);
+
+// Update user status (admin only)
+router.patch(
+  '/users/:id/status',
+  adminAuthMiddleware.authenticate,
+  adminAuthMiddleware.authorize(AdminRole.ADMIN),
+  validateParams(userIdSchema),
+  validateBody(updateUserStatusSchema),
+  ErrorHandler.asyncHandler(adminController.updateUserStatus)
 );
 
 // Development only - clear all users

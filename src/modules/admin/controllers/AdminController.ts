@@ -191,12 +191,58 @@ export class AdminController {
     }
   };
 
-  // ==================== ADMIN MANAGEMENT ====================
-
   /**
-   * Create a new admin
-   * Role is automatically set to ADMIN by default in the controller
+   * Update user status (admin only)
    */
+  public updateUserStatus = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    try {
+      const { id } = req.params;
+      const { status } = req.body;
+
+      if (!id) {
+        const response: ApiResponse = {
+          success: false,
+          message: 'User ID is required'
+        };
+        res.status(400).json(response);
+        return;
+      }
+
+      // Find user by ID
+      const user = await User.findById(id);
+
+      if (!user) {
+        const response: ApiResponse = {
+          success: false,
+          message: 'User not found'
+        };
+        res.status(404).json(response);
+        return;
+      }
+
+      // Update user status
+      user.status = status as UserStatus;
+      await user.save();
+
+      const response: ApiResponse = {
+        success: true,
+        message: 'User status updated successfully',
+        data: user
+      };
+
+      res.status(200).json(response);
+    } catch (error) {
+      console.error('Update user status error:', error);
+      const response: ApiResponse = {
+        success: false,
+        message: 'Failed to update user status',
+        ...(error instanceof Error && { errors: [error.message] })
+      };
+      res.status(500).json(response);
+    }
+  };
+
+  
   public createAdmin = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
       const adminData: CreateAdminData = req.body;
