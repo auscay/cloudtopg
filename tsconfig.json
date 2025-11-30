@@ -23,8 +23,6 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "moduleResolution": "node",
-    "typeRoots": ["./node_modules/@types"],
-    "types": ["node", "jest"],
     "baseUrl": "./src",
     "paths": {
       "@/*": ["*"],
@@ -41,5 +39,5 @@
     }
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts", "src/test"]
 }
