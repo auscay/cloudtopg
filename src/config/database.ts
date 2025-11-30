@@ -19,12 +19,7 @@ class Database {
         ? config.mongodb.testUri 
         : config.mongodb.uri;
 
-      await mongoose.connect(mongoUri, {
-        maxPoolSize: 10,
-        serverSelectionTimeoutMS: 5000,
-        socketTimeoutMS: 45000,
-        bufferCommands: false,
-      });
+      await mongoose.connect(mongoUri);
 
       console.log('✅ MongoDB connected successfully');
 

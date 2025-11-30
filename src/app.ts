@@ -60,7 +60,7 @@ export const createApp = (): express.Application => {
   }
 
   // Request ID middleware (for tracing)
-  app.use((req, res, next) => {
+  app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
     (req as any).id = Math.random().toString(36).substr(2, 9);
     res.setHeader('X-Request-ID', (req as any).id);
     next();
@@ -70,7 +70,7 @@ export const createApp = (): express.Application => {
   app.use('/api/v1', routes);
 
   // Root endpoint
-  app.get('/', (req, res) => {
+  app.get('/', (req: express.Request, res: express.Response) => {
     res.json({
       success: true,
       message: 'Educational Management System API',
