@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
+    "render-build": "npm install --production=false && npm run build",
     "start": "node dist/index.js",
     "dev": "nodemon src/index.ts",
     "test": "jest",
@@ -37,7 +38,8 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.0.3",
     "morgan": "^1.10.0",
-    "nodemailer": "^7.0.11"
+    "nodemailer": "^7.0.11",
+    "typescript": "^5.3.3"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
@@ -58,7 +60,6 @@
     "nodemon": "^3.0.2",
     "supertest": "^6.3.3",
     "ts-jest": "^29.1.1",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.3.3"
+    "ts-node": "^10.9.1"
   }
 }
