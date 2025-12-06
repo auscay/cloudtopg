@@ -99,7 +99,7 @@ export class AuthService {
           lastLogin: new Date(),
           ...(newUser.phoneNumber && { phoneNumber: newUser.phoneNumber }),
           ...(newUser.howDidYouHearAboutUs && { howDidYouHearAboutUs: newUser.howDidYouHearAboutUs }),
-          ...(!emailSent && { verificationCode: verificationToken })
+          // ...(!emailSent && { verificationCode: verificationToken })
         },
         tokens
       };
