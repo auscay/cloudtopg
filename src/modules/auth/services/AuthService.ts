@@ -5,6 +5,7 @@ import { AuthResponse, CreateUserData, LoginCredentials, AuthTokens } from '../.
 import { UserStatus, PaymentPlanType } from '../../../types';
 import { sendVerificationEmail } from '../../email/emails/sendVerificationEmail';
 import { sendPasswordResetEmail } from '../../email/emails/sendPasswordResetEmail';
+import { sendWelcomeEmail } from '../../email/emails/sendWelcomeEmail';
 import { SubscriptionService } from '../../subscription/services/SubscriptionService';
 
 export class AuthService {
@@ -270,8 +271,24 @@ export class AuthService {
         throw new Error('Invalid or expired verification token');
       }
 
+      // Check if email is already verified
+      const wasAlreadyVerified = user.isEmailVerified;
+
       // Update user email verification status
       await this.userRepository.updateEmailVerification(user._id, true);
+
+      // Send welcome email only if email was just verified (not already verified)
+      if (!wasAlreadyVerified) {
+        try {
+          await sendWelcomeEmail({
+            email: user.email,
+            firstName: user.firstName,
+          });
+        } catch (emailError) {
+          console.error('Failed to send welcome email:', emailError);
+          // Don't fail verification if welcome email fails
+        }
+      }
     } catch (error) {
       if (error instanceof Error) {
         throw error;

@@ -13,3 +13,4 @@ export { generateVerificationEmail, generateVerificationEmailText } from './temp
 // Email functions
 export { sendVerificationEmail, SendVerificationEmailParams } from './emails/sendVerificationEmail';
 export { sendPasswordResetEmail, SendPasswordResetEmailParams } from './emails/sendPasswordResetEmail';
+export { sendWelcomeEmail, SendWelcomeEmailParams } from './emails/sendWelcomeEmail';
