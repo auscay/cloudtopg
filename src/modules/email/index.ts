@@ -14,3 +14,5 @@ export { generateVerificationEmail, generateVerificationEmailText } from './temp
 export { sendVerificationEmail, SendVerificationEmailParams } from './emails/sendVerificationEmail';
 export { sendPasswordResetEmail, SendPasswordResetEmailParams } from './emails/sendPasswordResetEmail';
 export { sendWelcomeEmail, SendWelcomeEmailParams } from './emails/sendWelcomeEmail';
+export { sendApplicationFeeConfirmation, SendApplicationFeeConfirmationParams } from './emails/sendApplicationFeeConfirmation';
+export { sendSubscriptionConfirmation, SendSubscriptionConfirmationParams } from './emails/sendSubscriptionConfirmation';

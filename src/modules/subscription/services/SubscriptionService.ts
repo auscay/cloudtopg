@@ -3,6 +3,7 @@ import { TransactionRepository } from '../repositories/TransactionRepository';
 import { PaymentPlanRepository } from '../repositories/PaymentPlanRepository';
 import { PaystackService } from './PaystackService';
 import { User } from '../../user/models/User';
+import { sendSubscriptionConfirmation } from '../../email/emails/sendSubscriptionConfirmation';
 import {
   ISubscription,
   ITransaction,
@@ -314,10 +315,24 @@ export class SubscriptionService {
       }
       
       if (Object.keys(updateData).length > 0) {
-        await User.findByIdAndUpdate(
+        const updatedUser = await User.findByIdAndUpdate(
           updatedSubscription.userId,
-          updateData
+          updateData,
+          { new: true }
         );
+
+        // Send subscription confirmation email on first payment (when user is admitted)
+        if (isFirstPayment && updatedUser) {
+          try {
+            await sendSubscriptionConfirmation({
+              email: updatedUser.email,
+              firstName: updatedUser.firstName,
+            });
+          } catch (emailError) {
+            console.error('Failed to send subscription confirmation email:', emailError);
+            // Don't fail payment verification if email fails
+          }
+        }
       }
 
       return {

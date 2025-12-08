@@ -2,6 +2,7 @@ import { ApplicationFeeRepository } from '../repositories/ApplicationFeeReposito
 import { PaystackService } from '../../subscription/services/PaystackService';
 import { TransactionRepository } from '../../subscription/repositories/TransactionRepository';
 import { User } from '../../user/models/User';
+import { sendApplicationFeeConfirmation } from '../../email/emails/sendApplicationFeeConfirmation';
 import {
   IApplicationFee,
   ApplicationFeeStatus,
@@ -179,13 +180,27 @@ export class ApplicationFeeService {
     );
 
     // Update user's application fee payment status and change status to ENROLLED
-    await User.findByIdAndUpdate(
+    const updatedUser = await User.findByIdAndUpdate(
       applicationFee.userId,
       { 
         applicationFeePaid: true,
         status: UserStatus.ENROLLED
-      }
+      },
+      { new: true }
     );
+
+    // Send application fee confirmation email
+    if (updatedUser) {
+      try {
+        await sendApplicationFeeConfirmation({
+          email: updatedUser.email,
+          firstName: updatedUser.firstName,
+        });
+      } catch (emailError) {
+        console.error('Failed to send application fee confirmation email:', emailError);
+        // Don't fail payment verification if email fails
+      }
+    }
 
     return updatedFee;
   }
