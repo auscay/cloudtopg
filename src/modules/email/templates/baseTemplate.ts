@@ -70,6 +70,18 @@ export const baseEmailTemplate = (data: EmailTemplateData): string => {
       margin: 0 auto;
     }
     
+    /* Logo Header */
+    .logo-header {
+      background-color: #ffffff;
+      padding: 25px 20px 15px 20px;
+      text-align: left;
+    }
+    .logo-header img {
+      max-width: 120px;
+      height: auto;
+      display: block;
+    }
+    
     /* Header */
     .header {
       background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
@@ -144,6 +156,12 @@ export const baseEmailTemplate = (data: EmailTemplateData): string => {
       .email-container {
         width: 100% !important;
       }
+      .logo-header {
+        padding: 20px 15px 10px 15px !important;
+      }
+      .logo-header img {
+        max-width: 100px !important;
+      }
       .content {
         padding: 30px 20px !important;
       }
@@ -162,10 +180,10 @@ export const baseEmailTemplate = (data: EmailTemplateData): string => {
       <td align="center" style="padding: 20px 0;">
         <table border="0" cellpadding="0" cellspacing="0" class="email-container" width="600">
           
-          <!-- Header -->
+          <!-- Logo Header -->
           <tr>
-            <td class="header">
-              <h1>${config.app.name}</h1>
+            <td class="logo-header">
+              <img src="https://res.cloudinary.com/dysloawon/image/upload/v1766030923/unnamed_1_y7xqwk.jpg" alt="${config.app.name} Logo" style="max-width: 120px; height: auto; display: block;" />
             </td>
           </tr>
           

@@ -31,6 +31,7 @@ export const sendVerificationEmail = async (
   <!--[if mso]>
   <style type="text/css">
     body, table, td {font-family: Arial, Helvetica, sans-serif !important;}
+    .verification-code {color: #ffffff !important; font-weight: bold !important;}
   </style>
   <![endif]-->
   <style>
@@ -68,6 +69,18 @@ export const sendVerificationEmail = async (
       margin: 0 auto;
     }
     
+    /* Logo Header */
+    .logo-header {
+      background-color: #ffffff;
+      padding: 25px 20px 15px 20px;
+      text-align: left;
+    }
+    .logo-header img {
+      max-width: 120px;
+      height: auto;
+      display: block;
+    }
+    
     /* Content */
     .content {
       background-color: #ffffff;
@@ -97,11 +110,12 @@ export const sendVerificationEmail = async (
     }
     .verification-code {
       font-size: 48px;
-      font-weight: bold;
+      font-weight: 900;
       color: #ffffff;
       letter-spacing: 10px;
       font-family: 'Courier New', monospace;
       margin: 0;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     }
     
     /* Footer */
@@ -122,12 +136,20 @@ export const sendVerificationEmail = async (
       .email-container {
         width: 100% !important;
       }
+      .logo-header {
+        padding: 20px 15px 10px 15px !important;
+      }
+      .logo-header img {
+        max-width: 100px !important;
+      }
       .content {
         padding: 30px 20px !important;
       }
       .verification-code {
         font-size: 36px;
         letter-spacing: 5px;
+        font-weight: 900;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
       }
     }
   </style>
@@ -137,6 +159,13 @@ export const sendVerificationEmail = async (
     <tr>
       <td align="center" style="padding: 20px 0;">
         <table border="0" cellpadding="0" cellspacing="0" class="email-container" width="600">
+          
+          <!-- Logo Header -->
+          <tr>
+            <td class="logo-header">
+              <img src="https://res.cloudinary.com/dysloawon/image/upload/v1766030923/unnamed_1_y7xqwk.jpg" alt="${config.app.name} Logo" style="max-width: 120px; height: auto; display: block;" />
+            </td>
+          </tr>
           
           <!-- Content -->
           <tr>
@@ -160,8 +189,8 @@ export const sendVerificationEmail = async (
               </p>
               
               <!-- Verification Code Box -->
-              <div class="verification-code-box">
-                <p class="verification-code">${verificationCode}</p>
+              <div class="verification-code-box" style="background-color: #000000; padding: 30px; border-radius: 8px; margin: 30px 0; text-align: center;">
+                <p class="verification-code" style="font-size: 48px; font-weight: 900; color: #ffffff !important; letter-spacing: 10px; font-family: 'Courier New', monospace; margin: 0; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);">${verificationCode}</p>
               </div>
               
               <p style="font-size: 14px; color: #6b7280; margin-bottom: 20px;">

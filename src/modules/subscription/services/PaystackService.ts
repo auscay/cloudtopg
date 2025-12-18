@@ -25,7 +25,8 @@ export class PaystackService {
     email: string,
     amount: number,
     reference: string,
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
+    currency: string = 'NGN'
   ): Promise<PaystackInitializeResponse> {
     try {
       // Paystack expects amount in kobo (smallest currency unit)
@@ -35,6 +36,7 @@ export class PaystackService {
         email,
         amount: amountInKobo,
         reference,
+        currency,
         callback_url: config.paystack.callbackUrl,
         metadata: {
           ...metadata,
