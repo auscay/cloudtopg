@@ -16,7 +16,7 @@ const startServer = async (): Promise<void> => {
     // Seed super admin after database connection
     try {
       await runSeedSuperAdmin()
-      await seedPaymentPlans()
+      // await seedPaymentPlans()
     } catch (error) {
       console.error('Failed to seed super admin:', error);
     }
