@@ -17,7 +17,7 @@ export const sendApplicationFeeConfirmation = async (
     const { email, firstName } = params;
 
     const supportEmail = 'support@cloudtopg.com';
-    const portalUrl = `${config.app.url}/portal` || config.app.url;
+    const portalUrl = `${config.app.url}/student` || config.app.url;
 
     // Generate email content
     const content = `
@@ -52,6 +52,10 @@ export const sendApplicationFeeConfirmation = async (
       <p style="font-size: 16px; line-height: 1.8; color: #374151; margin-bottom: 20px;">
         To help you prepare, your <strong>Study Kit</strong> is now available in your Cloud Top G portal.
       </p>
+      
+      <div style="text-align: center; margin: 30px 0;">
+        <a href="${portalUrl}" class="mobile-button" target="_blank" style="display: inline-block; padding: 14px 40px; background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); color: #ffffff !important; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px; box-sizing: border-box; max-width: 100%;">Access Your Portal →</a>
+      </div>
       
       <p style="font-size: 16px; line-height: 1.8; color: #374151; margin-bottom: 20px;">
         It's designed to give you the focus and confidence you need to perform at your best.
@@ -107,8 +111,6 @@ export const sendApplicationFeeConfirmation = async (
       title: `Welcome ${firstName}, Your Cloud Top G Journey Is Officially Underway`,
       preheader: `Congratulations! Your application has been received. Your Cloud Top G journey starts now.`,
       content,
-      buttonText: 'Access Your Portal →',
-      buttonUrl: portalUrl,
       footerText: `© ${new Date().getFullYear()} ${config.app.name}. All rights reserved.`,
     });
 

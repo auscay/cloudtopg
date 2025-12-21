@@ -40,7 +40,7 @@ export class PaystackService {
         callback_url: config.paystack.callbackUrl,
         metadata: {
           ...metadata,
-          cancel_action: `${config.app.url}/subscriptions/payment-cancelled`
+          cancel_action: `${config.app.url}/student`
         }
       });
 

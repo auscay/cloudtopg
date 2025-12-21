@@ -17,7 +17,7 @@ export const sendWelcomeEmail = async (
     const { email, firstName } = params;
 
     // Application URL - you can customize this path
-    const applicationUrl = `${config.app.url}/apply` || `${config.app.url}`;
+    const applicationUrl = `https://portal.cloudtopg.com/student`;
     const supportEmail = 'support@cloudtopg.com';
 
     // Generate email content
@@ -66,16 +66,16 @@ export const sendWelcomeEmail = async (
         As part of our <strong>Cloud Top G Legacy Accelerator (valued at over ₦4,000,000)</strong>, you'll unlock <strong>₦6,000,000+ worth of exclusive bonuses — completely free.</strong> Each one is built to fast-track your growth and make your success not a matter of <em>if</em>, but <em>when:</em>
       </p>
       
-      <div style="background-color: #f9fafb; border-left: 4px solid #dc2626; padding: 20px; margin: 25px 0; border-radius: 4px;">
-        <ul style="margin: 0; padding-left: 20px; color: #374151; font-size: 16px; line-height: 2;">
+      <div style="background-color: #f9fafb; border-left: 4px solid #dc2626; padding: 20px; margin: 25px 0; border-radius: 4px;" class="bonus-list-container">
+        <ul style="margin: 0; padding-left: 20px; color: #374151; font-size: 16px; line-height: 2;" class="bonus-list">
           <li style="margin-bottom: 15px;">
-            <strong>💼 Career & ROI Transformation Suite™</strong> (Bonus) — learn how to earn back your investment and land your first remote role. (<del>₦850,000</del> Value)
+            <strong>💼 Career & ROI Transformation Suite™</strong> (Bonus) — learn how to earn back your investment and land your first remote role. (₦850,000 Value)
           </li>
           <li style="margin-bottom: 15px;">
-            <strong>👥 A-Player Accountability System™</strong> — build unstoppable consistency with a personal concierge and weekly progress tracking. (<del>₦600,000</del> Value)
+            <strong>👥 A-Player Accountability System™</strong> — build unstoppable consistency with a personal concierge and weekly progress tracking. (₦600,000 Value)
           </li>
           <li style="margin-bottom: 15px;">
-            <strong>🌍 Lifetime Mastermind Access™</strong> (Bonus) — network with ambitious engineers across the world. (<del>₦700,000</del> Value)
+            <strong>🌍 Lifetime Mastermind Access™</strong> (Bonus) — network with ambitious engineers across the world. (₦700,000 Value)
           </li>
           <li style="margin-bottom: 0;">
             <strong>⚡ The Unstuck Mentor Line™</strong> — get expert help in 60 minutes or less whenever you're blocked, confused, or need direction. (<strong>₦599,000 Value</strong>)
@@ -101,6 +101,10 @@ export const sendWelcomeEmail = async (
         If you're ready to move from just learning to truly mastering, your next step starts here:
       </p>
       
+      <div style="text-align: center; margin: 30px 0;">
+        <a href="${applicationUrl}" class="mobile-button" target="_blank" style="display: inline-block; padding: 14px 40px; background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); color: #ffffff !important; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px; box-sizing: border-box; max-width: 100%;">Start Your Application →</a>
+      </div>
+      
       <p style="font-size: 16px; line-height: 1.8; color: #374151; margin-bottom: 20px;">
         And remember, you're never alone on this journey.
       </p>
@@ -124,10 +128,8 @@ export const sendWelcomeEmail = async (
 
     const html = baseEmailTemplate({
       title: `Welcome to ${config.app.name}, ${firstName} — Your Journey to the Top 1% Starts Here`,
-      preheader: `Welcome ${firstName}! Your journey to becoming a top-1% Cloud Engineer starts here.`,
+      // preheader: `Welcome ${firstName}! Your journey to becoming a top-1% Cloud Engineer starts here.`,
       content,
-      buttonText: 'Start Your Application →',
-      buttonUrl: applicationUrl,
       footerText: `© ${new Date().getFullYear()} ${config.app.name}. All rights reserved.`,
     });
 

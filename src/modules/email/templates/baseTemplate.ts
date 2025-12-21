@@ -74,12 +74,13 @@ export const baseEmailTemplate = (data: EmailTemplateData): string => {
     .logo-header {
       background-color: #ffffff;
       padding: 25px 20px 15px 20px;
-      text-align: left;
+      text-align: right;
     }
     .logo-header img {
       max-width: 120px;
       height: auto;
       display: block;
+      margin-left: auto;
     }
     
     /* Header */
@@ -134,6 +135,19 @@ export const baseEmailTemplate = (data: EmailTemplateData): string => {
       transform: translateY(-2px);
     }
     
+    /* Mobile Button (for inline buttons in content) */
+    .mobile-button {
+      display: inline-block;
+      padding: 14px 40px;
+      background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+      color: #ffffff !important;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+    
     /* Footer */
     .footer {
       background-color: #fef2f2;
@@ -155,6 +169,7 @@ export const baseEmailTemplate = (data: EmailTemplateData): string => {
     @media only screen and (max-width: 600px) {
       .email-container {
         width: 100% !important;
+        max-width: 100% !important;
       }
       .logo-header {
         padding: 20px 15px 10px 15px !important;
@@ -165,9 +180,57 @@ export const baseEmailTemplate = (data: EmailTemplateData): string => {
       .content {
         padding: 30px 20px !important;
       }
+      .content h2 {
+        font-size: 20px !important;
+      }
+      .content p {
+        font-size: 15px !important;
+        line-height: 1.6 !important;
+      }
+      .content ul,
+      .content ol {
+        padding-left: 15px !important;
+      }
+      .content li {
+        margin-bottom: 10px !important;
+        font-size: 15px !important;
+      }
+      .bonus-list-container {
+        padding: 15px !important;
+        margin: 20px 0 !important;
+      }
+      .bonus-list {
+        padding-left: 15px !important;
+        font-size: 15px !important;
+        line-height: 1.8 !important;
+      }
+      .bonus-list li {
+        margin-bottom: 12px !important;
+        font-size: 15px !important;
+      }
+      .button-container {
+        margin: 25px 0 !important;
+      }
       .button {
         display: block !important;
         width: 100% !important;
+        padding: 14px 20px !important;
+        font-size: 15px !important;
+        box-sizing: border-box !important;
+      }
+      .mobile-button {
+        display: block !important;
+        width: 100% !important;
+        padding: 14px 20px !important;
+        font-size: 15px !important;
+        box-sizing: border-box !important;
+        text-align: center !important;
+      }
+      .footer {
+        padding: 25px 15px !important;
+      }
+      .footer p {
+        font-size: 13px !important;
       }
     }
   </style>
@@ -183,14 +246,14 @@ export const baseEmailTemplate = (data: EmailTemplateData): string => {
           <!-- Logo Header -->
           <tr>
             <td class="logo-header">
-              <img src="https://res.cloudinary.com/dysloawon/image/upload/v1766030923/unnamed_1_y7xqwk.jpg" alt="${config.app.name} Logo" style="max-width: 120px; height: auto; display: block;" />
+              <img src="https://znzcgxxkbxnjowiqregs.supabase.co/storage/v1/object/public/assets/LOGO-2.png" alt="${config.app.name} Logo" style="max-width: 120px; height: auto; display: block; margin-left: auto;" />
             </td>
           </tr>
           
           <!-- Content -->
           <tr>
             <td class="content">
-              <h2>${title}</h2>
+              
               ${content}
               ${buttonText && buttonUrl ? `
               <div class="button-container">
@@ -205,9 +268,9 @@ export const baseEmailTemplate = (data: EmailTemplateData): string => {
             <td class="footer">
               <p>${footerText}</p>
               <p>
-                <a href="${config.app.url}">Visit our website</a> | 
-                <a href="${config.app.url}/support">Support</a> | 
-                <a href="${config.app.url}/privacy">Privacy Policy</a>
+                <a href="https://cloudtopg.com">Visit our website</a> | 
+                <a href="${config.app.url}">Support</a> | 
+                <a href="https://cloudtopg.com/privacy-policy">Privacy Policy</a>
               </p>
               <p style="margin-top: 15px; color: #999999; font-size: 12px;">
                 If you didn't request this email, please ignore it.

@@ -73,12 +73,13 @@ export const sendVerificationEmail = async (
     .logo-header {
       background-color: #ffffff;
       padding: 25px 20px 15px 20px;
-      text-align: left;
+      text-align: right;
     }
     .logo-header img {
       max-width: 120px;
       height: auto;
       display: block;
+      margin-left: auto;
     }
     
     /* Content */
@@ -135,6 +136,7 @@ export const sendVerificationEmail = async (
     @media only screen and (max-width: 600px) {
       .email-container {
         width: 100% !important;
+        max-width: 100% !important;
       }
       .logo-header {
         padding: 20px 15px 10px 15px !important;
@@ -145,11 +147,28 @@ export const sendVerificationEmail = async (
       .content {
         padding: 30px 20px !important;
       }
+      .content h2 {
+        font-size: 20px !important;
+      }
+      .content p {
+        font-size: 15px !important;
+        line-height: 1.6 !important;
+      }
+      .verification-code-box {
+        padding: 20px 15px !important;
+        margin: 20px 0 !important;
+      }
       .verification-code {
-        font-size: 36px;
-        letter-spacing: 5px;
-        font-weight: 900;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        font-size: 36px !important;
+        letter-spacing: 5px !important;
+        font-weight: 900 !important;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+      }
+      .footer {
+        padding: 25px 15px !important;
+      }
+      .footer p {
+        font-size: 13px !important;
       }
     }
   </style>
@@ -163,7 +182,7 @@ export const sendVerificationEmail = async (
           <!-- Logo Header -->
           <tr>
             <td class="logo-header">
-              <img src="https://res.cloudinary.com/dysloawon/image/upload/v1766030923/unnamed_1_y7xqwk.jpg" alt="${config.app.name} Logo" style="max-width: 120px; height: auto; display: block;" />
+              <img src="https://znzcgxxkbxnjowiqregs.supabase.co/storage/v1/object/public/assets/LOGO-2.png" alt="${config.app.name} Logo" style="max-width: 120px; height: auto; display: block; margin-left: auto;" />
             </td>
           </tr>
           
@@ -184,9 +203,6 @@ export const sendVerificationEmail = async (
                 To complete your registration and verify your email address, please use the verification code below.
               </p>
               
-              <p style="font-size: 16px; line-height: 1.6; color: #374151; margin-bottom: 20px;">
-                To keep your account secure and activate your access, please verify your email using the code below:
-              </p>
               
               <!-- Verification Code Box -->
               <div class="verification-code-box" style="background-color: #000000; padding: 30px; border-radius: 8px; margin: 30px 0; text-align: center;">
