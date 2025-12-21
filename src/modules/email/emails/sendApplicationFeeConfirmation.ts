@@ -17,7 +17,7 @@ export const sendApplicationFeeConfirmation = async (
     const { email, firstName } = params;
 
     const supportEmail = 'support@cloudtopg.com';
-    const portalUrl = `${config.app.url}/student` || config.app.url;
+    const portalUrl = `${config.app.url}/study-kits` || config.app.url;
 
     // Generate email content
     const content = `
