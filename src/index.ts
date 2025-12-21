@@ -3,8 +3,9 @@ import database from './config/database';
 import { config } from './config';
 import { ErrorHandler } from './middleware/errorHandler';
 import { runSeedCustomSuperAdmin, runSeedSuperAdmin } from './modules/admin/scripts/seedSuperAdmin';
+import seedPaymentPlans from './modules/subscription/scripts/seedPaymentPlans';
 
-// Initialize error handling
+// Initialize error handling  
 ErrorHandler.initialize();
 
 const startServer = async (): Promise<void> => {
@@ -15,6 +16,7 @@ const startServer = async (): Promise<void> => {
     // Seed super admin after database connection
     try {
       await runSeedSuperAdmin()
+      await seedPaymentPlans()
     } catch (error) {
       console.error('Failed to seed super admin:', error);
     }

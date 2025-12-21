@@ -70,5 +70,5 @@ async function seedPaymentPlans() {
 }
 
 // Run the seed function
-seedPaymentPlans();
+export default seedPaymentPlans;
 
